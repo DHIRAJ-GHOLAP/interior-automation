@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # ----------------------------------------------------------------------------
+  # InteriorFlow Application Service (FastAPI + Vite Bundle)
+  # ----------------------------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: interiorflow_app
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8000}:8000"
+    environment:
+      - ENV=production
+      - DATABASE_URL=postgresql://interior_admin:${DB_PASSWORD:-SecretPostgresPassword2026!}@db:5432/interior_saas
+      - SECRET_KEY=${SECRET_KEY:-interiorflow-super-secure-production-jwt-token-2026}
+      - APP_BASE_URL=${APP_BASE_URL:-http://localhost:8000}
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - app_uploads:/app/uploads
+
+  # ----------------------------------------------------------------------------
+  # PostgreSQL 16 Enterprise Database
+  # ----------------------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: interiorflow_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: interior_admin
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-SecretPostgresPassword2026!}
+      POSTGRES_DB: interior_saas
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U interior_admin -d interior_saas"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ----------------------------------------------------------------------------
+  # Redis Cache & Background Tasks
+  # ----------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: interiorflow_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata:/data
+
+volumes:
+  pgdata:
+  redisdata:
+  app_uploads:
