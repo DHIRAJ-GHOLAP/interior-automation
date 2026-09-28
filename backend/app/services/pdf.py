@@ -201,7 +201,7 @@ class QuotationPDFService:
 
         # Studio Identity
         studio_name = (tenant.name if tenant and tenant.name else "MORE CONSTRUCTION AND INTERIOR").upper()
-        studio_phone = tenant.company_phone if tenant and tenant.company_phone else "+91 9876543210"
+        studio_phone = tenant.company_phone if tenant and tenant.company_phone else "+91 70389 88038"
         studio_email = tenant.company_email if tenant and tenant.company_email else "contact@moreconstruction.com"
         studio_gst = tenant.gst_number if tenant and tenant.gst_number else "27AAAPL1234F1Z9"
         studio_city = tenant.city if tenant and tenant.city else "Mumbai"

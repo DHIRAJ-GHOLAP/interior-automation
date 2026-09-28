@@ -207,6 +207,7 @@ class ClientPortalItemView(BaseModel):
 class ClientPortalQuotationView(BaseModel):
     id: str
     studio_name: Optional[str] = "More Construction and Interior"
+    studio_phone: Optional[str] = "+91 70389 88038"
     pdf_url: Optional[str] = None
     quotation_number: str
     version: str

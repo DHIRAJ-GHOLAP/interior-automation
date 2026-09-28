@@ -48,7 +48,7 @@ def get_or_create_default_tenant(db: Session) -> Tenant:
             id=settings.DEFAULT_TENANT_ID,
             name="More Construction and Interior",
             subdomain="more-construction-interior",
-            company_phone="9876543210",
+            company_phone="+91 70389 88038",
             company_email="contact@moreconstruction.com",
             gst_number="27AAAPL1234F1Z9",
             address="Level 4, Trade Centre, BKC",
@@ -61,6 +61,8 @@ def get_or_create_default_tenant(db: Session) -> Tenant:
             is_active=True
         )
         db.add(tenant)
+        if not tenant.company_phone or "9876543210" in tenant.company_phone:
+            tenant.company_phone = "+91 70389 88038"
         db.commit()
         db.refresh(tenant)
     else:

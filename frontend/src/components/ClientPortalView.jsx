@@ -135,6 +135,10 @@ export default function ClientPortalView({ publicToken, onClose, onResponseSucce
 
   const pdfDownloadUrl = quoteData.pdf_url || `/api/quotations/${quoteData.id}/pdf`;
   const studioName = quoteData.studio_name || "More Construction and Interior";
+  const studioPhone = quoteData.studio_phone || "+91 70389 88038";
+  const cleanedDigits = (quoteData.studio_phone || "7038988038").replace(/\D/g, '');
+  const studioWaNumber = cleanedDigits.length === 10 ? `91${cleanedDigits}` : cleanedDigits;
+  const waChatText = encodeURIComponent(`Hello ${studioName}, I have reviewed quotation #${quoteData.quotation_number} for ${quoteData.project_name} on the portal and would like to discuss.`);
 
   return (
     <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 overflow-y-auto sm:p-4 md:p-6 flex justify-center items-start sm:items-center">
@@ -369,13 +373,13 @@ export default function ClientPortalView({ publicToken, onClose, onResponseSucce
 
                   <div className="pt-2">
                     <a
-                      href="https://wa.me/919999999999"
+                      href={`https://wa.me/${studioWaNumber}?text=${waChatText}`}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center justify-center gap-2 w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs rounded-xl shadow-xs transition touch-manipulation"
                     >
                       <MessageSquare className="w-4 h-4" />
-                      <span>Chat with Designer on WhatsApp</span>
+                      <span>Chat with Designer on WhatsApp ({studioPhone})</span>
                     </a>
                   </div>
                 </div>
