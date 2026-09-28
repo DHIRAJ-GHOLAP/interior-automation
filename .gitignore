@@ -87,3 +87,5 @@ Thumbs.db
 *.pdf
 pdf_page*.png
 /tmp/
+.neon
+.env.local
