@@ -104,6 +104,11 @@ app.include_router(analytics.router)
 app.include_router(whatsapp.router)
 app.include_router(ai.router)
 
+@app.api_route("/health", methods=["GET", "HEAD"])
+@app.api_route("/ping", methods=["GET", "HEAD"])
+def quick_ping():
+    return {"status": "ok"}
+
 # 7. Static SPA Mount (Production Vite Bundle)
 dist_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../frontend/dist"))
 if os.path.exists(dist_dir):

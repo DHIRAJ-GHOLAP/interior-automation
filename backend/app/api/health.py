@@ -10,7 +10,8 @@ router = APIRouter(prefix="/api/health", tags=["System Health & Observability"])
 
 START_TIME = time.time()
 
-@router.get("", status_code=status.HTTP_200_OK)
+@router.api_route("", methods=["GET", "HEAD"], status_code=status.HTTP_200_OK)
+@router.api_route("/", methods=["GET", "HEAD"], status_code=status.HTTP_200_OK)
 def health_check(db: Session = Depends(get_db)):
     db_status = "healthy"
     latency_ms = 0.0
