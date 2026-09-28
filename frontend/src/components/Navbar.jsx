@@ -55,13 +55,13 @@ export default function Navbar({
     { id: 'whatsapp_ai', label: 'AI Hub', icon: MessageSquareCode, isSpecial: true },
   ];
 
-  const studioName = tenant?.name || 'ABC Interiors';
+  const studioName = tenant?.name || 'More Construction and Interior';
   const studioInitials = studioName
     .split(' ')
     .filter(Boolean)
     .slice(0, 2)
     .map(w => w[0].toUpperCase())
-    .join('') || 'AI';
+    .join('') || 'MC';
 
   return (
     <>

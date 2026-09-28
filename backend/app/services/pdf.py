@@ -168,9 +168,9 @@ class QuotationPDFService:
         styles = getSampleStyleSheet()
 
         # Studio Identity
-        studio_name = (tenant.name if tenant and tenant.name else "APEX LUXURY INTERIORS").upper()
+        studio_name = (tenant.name if tenant and tenant.name else "MORE CONSTRUCTION AND INTERIOR").upper()
         studio_phone = tenant.company_phone if tenant and tenant.company_phone else "+91 9876543210"
-        studio_email = tenant.company_email if tenant and tenant.company_email else "hello@abcinteriors.com"
+        studio_email = tenant.company_email if tenant and tenant.company_email else "contact@moreconstruction.com"
         studio_gst = tenant.gst_number if tenant and tenant.gst_number else "27AAAPL1234F1Z9"
         studio_city = tenant.city if tenant and tenant.city else "Mumbai"
         studio_address = tenant.address if tenant and tenant.address else "Level 4, Trade Centre, BKC, Mumbai"
@@ -179,7 +179,7 @@ class QuotationPDFService:
         bank_name = tenant.bank_name if tenant and tenant.bank_name else "ICICI Bank"
         bank_acc = tenant.bank_account_no if tenant and tenant.bank_account_no else "001205001234"
         bank_ifsc = tenant.bank_ifsc if tenant and tenant.bank_ifsc else "ICIC0000012"
-        bank_upi = tenant.upi_id if tenant and tenant.upi_id else "apexluxury@icici"
+        bank_upi = tenant.upi_id if tenant and tenant.upi_id else "moreconstruction@icici"
 
         # Typography Styles
         style_studio_title = ParagraphStyle(
@@ -396,7 +396,7 @@ class QuotationPDFService:
             ],
             [
                 Paragraph(
-                    f"Bespoke Turnkey Residential & Commercial Interiors<br/>"
+                    f"Turnkey Civil Construction & Luxury Architectural Interiors<br/>"
                     f"Phone: {studio_phone} • Email: {studio_email}<br/>"
                     f"{studio_address} • <b>GSTIN:</b> {studio_gst}",
                     style_studio_tagline

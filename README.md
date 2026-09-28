@@ -95,7 +95,7 @@ curl -f http://localhost:8000/api/health
 
 ## 🔑 Default Credentials (Development Mode)
 
-- **Studio Name**: ABC Interiors (Apex Luxury Interiors)
+- **Studio Name**: More Construction and Interior
 - **Admin Email**: `admin@abcinteriors.com`
 - **Admin Password**: `admin123`
 - **API Swagger Docs**: `http://localhost:8000/docs`

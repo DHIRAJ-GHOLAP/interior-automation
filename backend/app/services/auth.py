@@ -46,23 +46,29 @@ def get_or_create_default_tenant(db: Session) -> Tenant:
     if not tenant:
         tenant = Tenant(
             id=settings.DEFAULT_TENANT_ID,
-            name="ABC Interiors",
-            subdomain="abc-interiors",
+            name="More Construction and Interior",
+            subdomain="more-construction-interior",
             company_phone="9876543210",
-            company_email="hello@abcinteriors.com",
-            gst_number="27AABCA1234F1Z5",
+            company_email="contact@moreconstruction.com",
+            gst_number="27AAAPL1234F1Z9",
             address="Level 4, Trade Centre, BKC",
             city="Mumbai",
-            bank_name="HDFC Bank",
-            bank_account_no="50200012345678",
-            bank_ifsc="HDFC0000123",
-            upi_id="abcinteriors@hdfcbank",
+            bank_name="ICICI Bank",
+            bank_account_no="001205001234",
+            bank_ifsc="ICIC0000012",
+            upi_id="moreconstruction@icici",
             plan="PRO",
             is_active=True
         )
         db.add(tenant)
         db.commit()
         db.refresh(tenant)
+    else:
+        if tenant.name in ("ABC Interiors", "Apex Luxury Interiors", "More Interiors"):
+            tenant.name = "More Construction and Interior"
+            tenant.subdomain = "more-construction-interior"
+            db.commit()
+            db.refresh(tenant)
     return tenant
 
 def get_or_create_default_user(db: Session, tenant: Tenant) -> User:

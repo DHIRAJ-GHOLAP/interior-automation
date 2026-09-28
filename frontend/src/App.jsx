@@ -344,7 +344,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
-        {tenant?.name || 'ABC Interiors'} • Enterprise Interior SaaS Platform
+        {tenant?.name || 'More Construction and Interior'} • Enterprise Interior SaaS Platform
       </footer>
     </div>
   );

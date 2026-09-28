@@ -110,7 +110,7 @@ export default function StudioSettingsModal({ tenant, onSave, onClose }) {
                 required
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="e.g. Apex Studio Interiors"
+                placeholder="e.g. More Construction and Interior"
                 className="w-full px-3 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm font-medium"
               />
             </div>

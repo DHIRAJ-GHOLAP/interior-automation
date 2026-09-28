@@ -137,7 +137,7 @@ export default function ClientPortalView({ publicToken, onClose, onResponseSucce
           <div className="flex items-center gap-2 truncate pr-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0"></span>
             <span className="font-mono text-slate-300 text-[11px] sm:text-xs truncate">
-              quote.abcinteriors.in/q/{publicToken?.slice(0, 10)}...
+              quote.moreconstruction.in/q/{publicToken?.slice(0, 10)}...
             </span>
           </div>
           <button
@@ -155,7 +155,9 @@ export default function ClientPortalView({ publicToken, onClose, onResponseSucce
           <div className="p-4 sm:p-7 bg-gradient-to-b from-blue-50/60 to-white border-b border-slate-100">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
-                <span className="text-[10px] sm:text-xs uppercase tracking-wider font-extrabold text-blue-600">ABC INTERIORS</span>
+                <span className="text-[10px] sm:text-xs uppercase tracking-wider font-extrabold text-blue-600">
+                  {quoteData.studio_name || "MORE CONSTRUCTION AND INTERIOR"}
+                </span>
                 <h1 className="text-xl sm:text-3xl font-extrabold text-slate-900 mt-0.5 tracking-tight">Your Interior Proposal</h1>
                 <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600 mt-1 font-medium">
                   <span className="font-bold text-slate-800">{quoteData.project_name}</span>
