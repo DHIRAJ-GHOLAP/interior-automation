@@ -205,6 +205,9 @@ class ClientPortalItemView(BaseModel):
     amount: float
 
 class ClientPortalQuotationView(BaseModel):
+    id: str
+    studio_name: Optional[str] = "More Construction and Interior"
+    pdf_url: Optional[str] = None
     quotation_number: str
     version: str
     client_name: str

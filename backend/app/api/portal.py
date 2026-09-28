@@ -35,7 +35,13 @@ def get_client_portal_quote(public_token: str, db: Session = Depends(get_db)):
         ) for it in q.items
     ]
 
+    studio_name = q.tenant.name if (q.tenant and q.tenant.name) else "More Construction and Interior"
+    pdf_url = f"/api/quotations/{q.id}/pdf"
+
     return ClientPortalQuotationView(
+        id=q.id,
+        studio_name=studio_name,
+        pdf_url=pdf_url,
         quotation_number=q.quotation_number,
         version=q.version,
         client_name=client.name,

@@ -5,17 +5,45 @@ from ..models import WhatsAppLog, Quotation, Client
 
 class WhatsAppService:
     @staticmethod
-    def format_quote_message(client_name: str, quotation_number: str, project_name: str, amount: float, portal_url: str) -> str:
+    def format_quote_message(
+        client_name: str, 
+        quotation_number: str, 
+        project_name: str, 
+        amount: float, 
+        portal_url: str,
+        pdf_url: str = None,
+        studio_name: str = "More Construction and Interior"
+    ) -> str:
         formatted_amount = f"₹{amount:,.2f}"
-        return (
-            f"Hello {client_name}, your interior quotation has been prepared.\n\n"
-            f"📄 *Quotation No:* {quotation_number}\n"
-            f"🏠 *Project:* {project_name}\n"
-            f"💰 *Amount:* {formatted_amount}\n\n"
-            f"Please review your quotation here:\n"
-            f"{portal_url}\n\n"
-            f"— ABC Interiors"
-        )
+        lines = [
+            f"Hello {client_name},",
+            f"",
+            f"Greetings from *{studio_name}*! Your detailed interior estimate & design proposal is ready for review.",
+            f"",
+            f"📋 *Quotation No:* {quotation_number}",
+            f"🏠 *Project:* {project_name}",
+            f"💰 *Total Proposal Value:* {formatted_amount}",
+            f"",
+            f"━━━━━━━━━━━━━━━━━━",
+            f"✨ *1. View Interactive Proposal & Reply Online:*",
+            f"{portal_url}",
+            f"_(Review room-by-room BOQ items, specifications, and approve or request revisions directly on your phone)_",
+            f"",
+        ]
+        if pdf_url:
+            lines.extend([
+                f"📥 *2. Download Official Branded PDF:*",
+                f"{pdf_url}",
+                f"",
+            ])
+        lines.extend([
+            f"━━━━━━━━━━━━━━━━━━",
+            f"💬 *Quick Reply:* You can review the proposal and approve or request revisions directly through the online link above or reply right here on WhatsApp!",
+            f"",
+            f"Warm regards,",
+            f"*{studio_name}*"
+        ])
+        return "\n".join(lines)
 
     @staticmethod
     def create_whatsapp_link(phone: str, message: str) -> str:
@@ -29,12 +57,17 @@ class WhatsAppService:
     @staticmethod
     def log_and_send(db: Session, quotation: Quotation, client: Client, portal_base_url: str) -> dict:
         portal_url = f"{portal_base_url}/quote/{quotation.public_token}"
+        pdf_url = f"{portal_base_url}/api/quotations/{quotation.id}/pdf"
+        studio_name = quotation.tenant.name if (quotation.tenant and quotation.tenant.name) else "More Construction and Interior"
+
         msg = WhatsAppService.format_quote_message(
             client_name=client.name,
             quotation_number=quotation.quotation_number,
             project_name=quotation.project.name,
             amount=quotation.total_amount,
-            portal_url=portal_url
+            portal_url=portal_url,
+            pdf_url=pdf_url,
+            studio_name=studio_name
         )
 
         wa_log = WhatsAppLog(
@@ -57,5 +90,7 @@ class WhatsAppService:
             "message": msg,
             "direct_whatsapp_link": direct_link,
             "recipient_phone": client.whatsapp or client.phone,
-            "status": "Logged and Marked as Sent"
+            "status": "Logged and Marked as Sent",
+            "portal_url": portal_url,
+            "pdf_url": pdf_url
         }

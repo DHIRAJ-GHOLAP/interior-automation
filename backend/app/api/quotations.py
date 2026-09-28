@@ -78,8 +78,10 @@ def send_whatsapp(
     if not q:
         raise HTTPException(status_code=404, detail="Quotation not found")
     
-    if not portal_base_url or "localhost:5173" in portal_base_url:
+    if not portal_base_url:
         portal_base_url = str(request.base_url).rstrip("/")
+    else:
+        portal_base_url = portal_base_url.rstrip("/")
 
     client = q.project.client
     result = WhatsAppService.log_and_send(db, q, client, portal_base_url)

@@ -26,6 +26,8 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [showStudioModal, setShowStudioModal] = useState(false);
 
+  const [isDirectClientView, setIsDirectClientView] = useState(false);
+
   // Check URL on load (e.g. if accessed directly at /quote/:token)
   useEffect(() => {
     const path = window.location.pathname;
@@ -33,6 +35,7 @@ export default function App() {
       const token = path.replace('/quote/', '').trim();
       if (token) {
         setPortalToken(token);
+        setIsDirectClientView(true);
       }
     }
   }, []);
@@ -243,6 +246,17 @@ export default function App() {
       alert('Please create a quotation first to view the client portal.');
     }
   };
+
+  // Direct standalone client view (opened from WhatsApp/link directly by a homeowner)
+  if (isDirectClientView && portalToken) {
+    return (
+      <ClientPortalView
+        publicToken={portalToken}
+        onClose={null}
+        onResponseSuccess={() => {}}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-100 text-slate-800">

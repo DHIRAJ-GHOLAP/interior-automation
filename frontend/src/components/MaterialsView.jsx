@@ -163,11 +163,12 @@ export default function MaterialsView({ materials, onAddMaterial, onDeleteMateri
                   </span>
                   <button
                     onClick={() => onDeleteMaterial && onDeleteMaterial(m.id)}
-                    className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 active:bg-rose-100 rounded-lg transition touch-manipulation"
-                    title="Delete Material"
-                    aria-label="Delete Material"
+                    className="inline-flex items-center gap-1 px-2 py-1 text-rose-600 bg-rose-50 hover:bg-rose-100 active:bg-rose-200 rounded-lg transition touch-manipulation text-[11px] font-semibold border border-rose-100"
+                    title="Remove Material"
+                    aria-label="Remove Material"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
+                    <span>Delete</span>
                   </button>
                 </div>
               </div>
@@ -256,11 +257,12 @@ export default function MaterialsView({ materials, onAddMaterial, onDeleteMateri
                     <td className="py-3 px-4 text-center">
                       <button
                         onClick={() => onDeleteMaterial && onDeleteMaterial(m.id)}
-                        className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 active:bg-rose-100 rounded-lg transition"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-rose-600 bg-rose-50 hover:bg-rose-100 active:bg-rose-200 rounded-lg transition font-medium text-xs border border-rose-100"
                         title="Delete Material"
                         aria-label="Delete Material"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Delete</span>
                       </button>
                     </td>
                   </tr>
