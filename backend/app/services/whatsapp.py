@@ -20,25 +20,25 @@ class WhatsAppService:
             f"",
             f"Greetings from *{studio_name}*! Your detailed interior estimate & design proposal is ready for review.",
             f"",
-            f"📋 *Quotation No:* {quotation_number}",
-            f"🏠 *Project:* {project_name}",
-            f"💰 *Total Proposal Value:* {formatted_amount}",
+            f"• *Quotation No:* {quotation_number}",
+            f"• *Project:* {project_name}",
+            f"• *Total Proposal Value:* {formatted_amount}",
             f"",
-            f"━━━━━━━━━━━━━━━━━━",
-            f"✨ *1. View Interactive Proposal & Reply Online:*",
+            f"--------------------------------------------------",
+            f"*1. View Interactive Proposal & Reply Online:*",
             f"{portal_url}",
             f"_(Review room-by-room BOQ items, specifications, and approve or request revisions directly on your phone)_",
             f"",
         ]
         if pdf_url:
             lines.extend([
-                f"📥 *2. Download Official Branded PDF:*",
+                f"*2. Download Official Branded PDF:*",
                 f"{pdf_url}",
                 f"",
             ])
         lines.extend([
-            f"━━━━━━━━━━━━━━━━━━",
-            f"💬 *Quick Reply:* You can review the proposal and approve or request revisions directly through the online link above or reply right here on WhatsApp!",
+            f"--------------------------------------------------",
+            f"*Quick Reply:* You can review the proposal and approve or request revisions directly through the online link above or reply right here on WhatsApp!",
             f"",
             f"Warm regards,",
             f"*{studio_name}*"
