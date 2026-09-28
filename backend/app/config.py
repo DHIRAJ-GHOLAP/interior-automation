@@ -1,6 +1,7 @@
 import os
-from typing import List
+from typing import List, Union
 from pydantic_settings import BaseSettings
+from pydantic import field_validator
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "InteriorFlow SaaS"
@@ -19,10 +20,23 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7 # 7 days
 
-    # CORS
-    CORS_ORIGINS: List[str] = [
-        "*"
-    ]
+    # CORS (supports comma-separated string, JSON list, or "*")
+    CORS_ORIGINS: Union[List[str], str] = ["*"]
+
+    @field_validator("CORS_ORIGINS", mode="before")
+    @classmethod
+    def assemble_cors_origins(cls, v):
+        if isinstance(v, str):
+            if v.startswith("[") and v.endswith("]"):
+                import json
+                try:
+                    return json.loads(v)
+                except Exception:
+                    pass
+            return [i.strip() for i in v.split(",") if i.strip()]
+        elif isinstance(v, list):
+            return v
+        return ["*"]
 
     # Application URLs & Dynamic Portal
     APP_BASE_URL: str = os.getenv("APP_BASE_URL", "http://localhost:8000")

@@ -63,12 +63,11 @@ class SecurityAndTracingMiddleware(BaseHTTPMiddleware):
 app.add_middleware(SecurityAndTracingMiddleware)
 
 # 4. CORS Configuration (Supports Cloudflare Pages, Render, and Custom Domains)
-cors_env = os.getenv("CORS_ORIGINS", "")
-custom_origins = [o.strip() for o in cors_env.split(",") if o.strip()] if cors_env else []
+origins = settings.CORS_ORIGINS if isinstance(settings.CORS_ORIGINS, list) else ["*"]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=custom_origins if custom_origins else ["*"],
+    allow_origins=origins,
     allow_origin_regex=r"https://.*\.pages\.dev|https://.*\.onrender\.com|http://localhost:\d+|http://127\.0\.0\.1:\d+",
     allow_credentials=True,
     allow_methods=["*"],
