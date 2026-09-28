@@ -63,7 +63,7 @@ def download_quotation_pdf(quotation_id: str, db: Session = Depends(get_db)):
         content=pdf_bytes,
         media_type="application/pdf",
         headers={
-            "Content-Disposition": f"attachment; filename=Quotation_{q.quotation_number}.pdf"
+            "Content-Disposition": f"inline; filename=Quotation_{q.quotation_number}.pdf"
         }
     )
 
