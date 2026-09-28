@@ -8,10 +8,11 @@ import {
   ShieldCheck, 
   Tag,
   Filter,
-  X
+  X,
+  Trash2
 } from 'lucide-react';
 
-export default function MaterialsView({ materials, onAddMaterial }) {
+export default function MaterialsView({ materials, onAddMaterial, onDeleteMaterial }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -156,9 +157,19 @@ export default function MaterialsView({ materials, onAddMaterial }) {
                     {m.thickness && <span>• {m.thickness}</span>}
                   </div>
                 </div>
-                <span className="bg-slate-100 text-slate-700 text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                  {m.category}
-                </span>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="bg-slate-100 text-slate-700 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                    {m.category}
+                  </span>
+                  <button
+                    onClick={() => onDeleteMaterial && onDeleteMaterial(m.id)}
+                    className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 active:bg-rose-100 rounded-lg transition touch-manipulation"
+                    title="Delete Material"
+                    aria-label="Delete Material"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
 
               <div className="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-center text-xs">
@@ -201,6 +212,7 @@ export default function MaterialsView({ materials, onAddMaterial }) {
                 <th className="py-3 px-4 text-right">Client Rate (₹)</th>
                 <th className="py-3 px-4 text-right">Margin (₹)</th>
                 <th className="py-3 px-4 text-center">Wastage %</th>
+                <th className="py-3 px-4 text-center">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -240,6 +252,16 @@ export default function MaterialsView({ materials, onAddMaterial }) {
                       <span className="bg-amber-50 text-amber-800 font-semibold px-2 py-0.5 rounded-full text-[11px]">
                         +{m.default_wastage_percent}%
                       </span>
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      <button
+                        onClick={() => onDeleteMaterial && onDeleteMaterial(m.id)}
+                        className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 active:bg-rose-100 rounded-lg transition"
+                        title="Delete Material"
+                        aria-label="Delete Material"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </td>
                   </tr>
                 );

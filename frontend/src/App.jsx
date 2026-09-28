@@ -187,6 +187,24 @@ export default function App() {
     }
   };
 
+  const handleDeleteMaterial = async (materialId) => {
+    if (!window.confirm('Are you sure you want to delete this material?')) return;
+    try {
+      const res = await fetch(`/api/materials/${materialId}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        fetchData();
+      } else {
+        const data = await res.json();
+        alert(data.detail || 'Failed to delete material');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Error deleting material');
+    }
+  };
+
   const handleGenerateQuotation = async (quoteData) => {
     try {
       const res = await fetch('/api/quotations/generate', {
@@ -294,6 +312,7 @@ export default function App() {
           <MaterialsView
             materials={materials}
             onAddMaterial={handleAddMaterial}
+            onDeleteMaterial={handleDeleteMaterial}
           />
         )}
 

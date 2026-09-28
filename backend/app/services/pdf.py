@@ -19,24 +19,56 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
 # ------------------------------------------------------------------------------
-# Font & Currency Unicode Initialization (Resolves Rupee Symbol ■ Tofu Bug)
+# Lavish Typography & Unicode Currency Initialization
 # ------------------------------------------------------------------------------
-FONT_REGULAR = "Helvetica"
-FONT_BOLD = "Helvetica-Bold"
+font_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets", "fonts")
+
+serif_reg = os.path.join(font_dir, "DejaVuSerif.ttf")
+serif_bd = os.path.join(font_dir, "DejaVuSerif-Bold.ttf")
+serif_it = os.path.join(font_dir, "DejaVuSerif-Italic.ttf")
+
+sans_reg = os.path.join(font_dir, "DejaVuSans.ttf")
+sans_bd = os.path.join(font_dir, "DejaVuSans-Bold.ttf")
+
+if not os.path.exists(serif_reg):
+    serif_reg = "/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf"
+    serif_bd = "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf"
+    serif_it = "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Italic.ttf"
+if not os.path.exists(sans_reg):
+    sans_reg = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+    sans_bd = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+
+FONT_SERIF = "Times-Roman"
+FONT_SERIF_BOLD = "Times-Bold"
+FONT_SERIF_ITALIC = "Times-Italic"
+FONT_SANS = "Helvetica"
+FONT_SANS_BOLD = "Helvetica-Bold"
 CURRENCY_PREFIX = "Rs."
 
-dejavu_regular = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-dejavu_bold = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
-
-if os.path.exists(dejavu_regular) and os.path.exists(dejavu_bold):
+if os.path.exists(serif_reg) and os.path.exists(serif_bd):
     try:
-        pdfmetrics.registerFont(TTFont("DejaVuSans", dejavu_regular))
-        pdfmetrics.registerFont(TTFont("DejaVuSans-Bold", dejavu_bold))
-        FONT_REGULAR = "DejaVuSans"
-        FONT_BOLD = "DejaVuSans-Bold"
+        pdfmetrics.registerFont(TTFont("LavishSerif", serif_reg))
+        pdfmetrics.registerFont(TTFont("LavishSerif-Bold", serif_bd))
+        FONT_SERIF = "LavishSerif"
+        FONT_SERIF_BOLD = "LavishSerif-Bold"
         CURRENCY_PREFIX = "₹"
+        if os.path.exists(serif_it):
+            pdfmetrics.registerFont(TTFont("LavishSerif-Italic", serif_it))
+            FONT_SERIF_ITALIC = "LavishSerif-Italic"
     except Exception:
         pass
+
+if os.path.exists(sans_reg) and os.path.exists(sans_bd):
+    try:
+        pdfmetrics.registerFont(TTFont("LavishSans", sans_reg))
+        pdfmetrics.registerFont(TTFont("LavishSans-Bold", sans_bd))
+        FONT_SANS = "LavishSans"
+        FONT_SANS_BOLD = "LavishSans-Bold"
+    except Exception:
+        pass
+
+FONT_REGULAR = FONT_SERIF
+FONT_BOLD = FONT_SERIF_BOLD
 
 def format_inr(amount: float, symbol: str = CURRENCY_PREFIX) -> str:
     """
@@ -133,16 +165,16 @@ class NumberedCanvas(canvas.Canvas):
 
     def draw_page_decorations(self, total_pages):
         self.saveState()
-        self.setFont(FONT_REGULAR, 7.5)
+        self.setFont(FONT_SERIF, 7)
         self.setFillColor(colors.HexColor('#64748B'))
 
         # Running bottom rule
-        self.setStrokeColor(colors.HexColor('#E2E8F0'))
-        self.setLineWidth(0.75)
+        self.setStrokeColor(colors.HexColor('#CBD5E1'))
+        self.setLineWidth(0.6)
         self.line(36, 26, 612 - 36, 26)
 
         # Bottom Left: Confidentiality and studio note
-        self.drawString(36, 15, "Confidential • Commercial Turnkey Interior Quotation")
+        self.drawString(36, 15, "Confidential • More Construction and Interior • Turnkey Architectural Proposal")
 
         # Bottom Right: Page X of Y
         page_str = f"Page {self._pageNumber} of {total_pages}"
@@ -184,49 +216,49 @@ class QuotationPDFService:
         # Typography Styles
         style_studio_title = ParagraphStyle(
             'StudioTitle',
-            fontName=FONT_BOLD,
-            fontSize=16,
-            leading=19,
+            fontName=FONT_SERIF_BOLD,
+            fontSize=16.5,
+            leading=19.5,
             textColor=colors.HexColor('#0F172A')
         )
 
         style_studio_tagline = ParagraphStyle(
             'StudioTagline',
-            fontName=FONT_REGULAR,
+            fontName=FONT_SERIF,
             fontSize=7.5,
-            leading=10.5,
-            textColor=colors.HexColor('#64748B')
+            leading=11,
+            textColor=colors.HexColor('#475569')
         )
 
         style_doc_title = ParagraphStyle(
             'DocTitle',
-            fontName=FONT_BOLD,
-            fontSize=15,
-            leading=18,
+            fontName=FONT_SERIF_BOLD,
+            fontSize=13.5,
+            leading=16.5,
             alignment=2, # Right
-            textColor=colors.HexColor('#1D4ED8')
+            textColor=colors.HexColor('#0F172A')
         )
 
         style_doc_meta = ParagraphStyle(
             'DocMeta',
-            fontName=FONT_REGULAR,
+            fontName=FONT_SERIF,
             fontSize=8,
-            leading=11,
+            leading=11.5,
             alignment=2,
             textColor=colors.HexColor('#475569')
         )
 
         style_card_title = ParagraphStyle(
             'CardTitle',
-            fontName=FONT_BOLD,
-            fontSize=8,
-            leading=10,
-            textColor=colors.HexColor('#1E293B')
+            fontName=FONT_SERIF_BOLD,
+            fontSize=8.5,
+            leading=11,
+            textColor=colors.HexColor('#0F172A')
         )
 
         style_card_body = ParagraphStyle(
             'CardBody',
-            fontName=FONT_REGULAR,
+            fontName=FONT_SERIF,
             fontSize=7.5,
             leading=11,
             textColor=colors.HexColor('#334155')
@@ -234,15 +266,15 @@ class QuotationPDFService:
 
         style_section_title = ParagraphStyle(
             'SectionTitle',
-            fontName=FONT_BOLD,
+            fontName=FONT_SERIF_BOLD,
             fontSize=9.5,
-            leading=12,
+            leading=12.5,
             textColor=colors.HexColor('#0F172A')
         )
 
         style_th = ParagraphStyle(
             'TableHead',
-            fontName=FONT_BOLD,
+            fontName=FONT_SERIF_BOLD,
             fontSize=7.5,
             leading=9.5,
             textColor=colors.white
@@ -250,7 +282,7 @@ class QuotationPDFService:
 
         style_th_right = ParagraphStyle(
             'TableHeadRight',
-            fontName=FONT_BOLD,
+            fontName=FONT_SERIF_BOLD,
             fontSize=7.5,
             leading=9.5,
             alignment=2,
@@ -259,7 +291,7 @@ class QuotationPDFService:
 
         style_th_center = ParagraphStyle(
             'TableHeadCenter',
-            fontName=FONT_BOLD,
+            fontName=FONT_SERIF_BOLD,
             fontSize=7.5,
             leading=9.5,
             alignment=1,
@@ -268,23 +300,23 @@ class QuotationPDFService:
 
         style_td = ParagraphStyle(
             'TableDesc',
-            fontName=FONT_REGULAR,
+            fontName=FONT_SERIF_BOLD,
             fontSize=7.5,
             leading=10,
-            textColor=colors.HexColor('#1E293B')
+            textColor=colors.HexColor('#0F172A')
         )
 
         style_td_spec = ParagraphStyle(
             'TableDescSpec',
-            fontName=FONT_REGULAR,
-            fontSize=6.5,
-            leading=8.5,
+            fontName=FONT_SERIF,
+            fontSize=6.8,
+            leading=9,
             textColor=colors.HexColor('#64748B')
         )
 
         style_td_room = ParagraphStyle(
             'TableRoomBadge',
-            fontName=FONT_BOLD,
+            fontName=FONT_SERIF_BOLD,
             fontSize=7,
             leading=9,
             textColor=colors.HexColor('#1D4ED8')
@@ -292,7 +324,7 @@ class QuotationPDFService:
 
         style_td_right = ParagraphStyle(
             'TableDescRight',
-            fontName=FONT_REGULAR,
+            fontName=FONT_SERIF,
             fontSize=7.5,
             leading=10,
             alignment=2,
@@ -301,7 +333,7 @@ class QuotationPDFService:
 
         style_td_center = ParagraphStyle(
             'TableDescCenter',
-            fontName=FONT_REGULAR,
+            fontName=FONT_SERIF,
             fontSize=7.5,
             leading=10,
             alignment=1,
@@ -310,7 +342,7 @@ class QuotationPDFService:
 
         style_td_amount = ParagraphStyle(
             'TableDescAmount',
-            fontName=FONT_BOLD,
+            fontName=FONT_SERIF_BOLD,
             fontSize=7.5,
             leading=10,
             alignment=2,
@@ -319,7 +351,7 @@ class QuotationPDFService:
 
         style_total_label = ParagraphStyle(
             'TotalLabel',
-            fontName=FONT_REGULAR,
+            fontName=FONT_SERIF,
             fontSize=8,
             leading=10.5,
             alignment=2,
@@ -328,7 +360,7 @@ class QuotationPDFService:
 
         style_total_val = ParagraphStyle(
             'TotalVal',
-            fontName=FONT_BOLD,
+            fontName=FONT_SERIF_BOLD,
             fontSize=8,
             leading=10.5,
             alignment=2,
@@ -337,25 +369,25 @@ class QuotationPDFService:
 
         style_grand_label = ParagraphStyle(
             'GrandLabel',
-            fontName=FONT_BOLD,
-            fontSize=9.5,
-            leading=11.5,
+            fontName=FONT_SERIF_BOLD,
+            fontSize=10,
+            leading=12,
             alignment=2,
-            textColor=colors.HexColor('#1E3A8A')
+            textColor=colors.HexColor('#78350F')
         )
 
         style_grand_val = ParagraphStyle(
             'GrandVal',
-            fontName=FONT_BOLD,
-            fontSize=11,
-            leading=13,
+            fontName=FONT_SERIF_BOLD,
+            fontSize=12,
+            leading=14,
             alignment=2,
-            textColor=colors.HexColor('#1D4ED8')
+            textColor=colors.HexColor('#92400E')
         )
 
         style_terms = ParagraphStyle(
             'TermsText',
-            fontName=FONT_REGULAR,
+            fontName=FONT_SERIF,
             fontSize=7,
             leading=9.5,
             textColor=colors.HexColor('#475569')
@@ -364,14 +396,14 @@ class QuotationPDFService:
         story = []
 
         # ----------------------------------------------------------------------
-        # Top Accent Ribbon (Navy + Royal Blue + Gold)
+        # Top Luxury Accent Ribbon (Navy + Royal Blue + Gold)
         # ----------------------------------------------------------------------
         ribbon_table = Table([
             ["", "", ""]
         ], colWidths=[3.5 * inch, 2.5 * inch, 1.5 * inch], rowHeights=[3.5])
         ribbon_table.setStyle(TableStyle([
             ('BACKGROUND', (0,0), (0,0), colors.HexColor('#0F172A')),
-            ('BACKGROUND', (1,0), (1,0), colors.HexColor('#1D4ED8')),
+            ('BACKGROUND', (1,0), (1,0), colors.HexColor('#B45309')),
             ('BACKGROUND', (2,0), (2,0), colors.HexColor('#D97706')),
             ('PADDING', (0,0), (-1,-1), 0),
             ('BOTTOMPADDING', (0,0), (-1,-1), 0),
@@ -392,7 +424,7 @@ class QuotationPDFService:
         header_table = Table([
             [
                 Paragraph(f"<b>{studio_name}</b>", style_studio_title),
-                Paragraph(f"<b>INTERIOR QUOTATION</b><br/><font size='9' color='#475569'>#{quote_num}</font>", style_doc_title)
+                Paragraph(f"<b>INTERIOR SPECIFICATION & QUOTATION</b><br/><font size='9' color='#B45309'><b>#{quote_num}</b></font>", style_doc_title)
             ],
             [
                 Paragraph(
@@ -403,11 +435,11 @@ class QuotationPDFService:
                 ),
                 Paragraph(
                     f"<b>Date:</b> {date_str} • <b>Validity:</b> {valid_str}<br/>"
-                    f"<b>Version:</b> {version_str} &nbsp;|&nbsp; <font color='#1D4ED8'><b>{status_label}</b></font>",
+                    f"<b>Version:</b> {version_str} &nbsp;|&nbsp; <font color='#B45309'><b>{status_label}</b></font>",
                     style_doc_meta
                 )
             ]
-        ], colWidths=[4.4 * inch, 3.1 * inch])
+        ], colWidths=[4.2 * inch, 3.3 * inch])
 
         header_table.setStyle(TableStyle([
             ('VALIGN', (0,0), (-1,-1), 'TOP'),

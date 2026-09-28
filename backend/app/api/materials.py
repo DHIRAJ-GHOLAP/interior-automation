@@ -16,7 +16,10 @@ def get_materials(category: Optional[str] = None, db: Session = Depends(get_db))
 
 @router.post("", response_model=MaterialOut)
 def create_material(mat_in: MaterialCreate, db: Session = Depends(get_db)):
-    mat = Material(**mat_in.dict())
+    data = mat_in.dict()
+    data.pop('in_stock', None)
+    data.pop('notes', None)
+    mat = Material(**data)
     db.add(mat)
     db.commit()
     db.refresh(mat)
@@ -27,7 +30,10 @@ def update_material(material_id: str, mat_in: MaterialCreate, db: Session = Depe
     mat = db.query(Material).filter(Material.id == material_id).first()
     if not mat:
         raise HTTPException(status_code=404, detail="Material not found")
-    for key, val in mat_in.dict().items():
+    data = mat_in.dict()
+    data.pop('in_stock', None)
+    data.pop('notes', None)
+    for key, val in data.items():
         setattr(mat, key, val)
     db.commit()
     db.refresh(mat)
@@ -38,6 +44,8 @@ def delete_material(material_id: str, db: Session = Depends(get_db)):
     mat = db.query(Material).filter(Material.id == material_id).first()
     if not mat:
         raise HTTPException(status_code=404, detail="Material not found")
+    from ..models import BOQItem
+    db.query(BOQItem).filter(BOQItem.material_id == material_id).update({BOQItem.material_id: None})
     db.delete(mat)
     db.commit()
     return {"message": "Material deleted"}
