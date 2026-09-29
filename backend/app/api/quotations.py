@@ -48,7 +48,7 @@ def create_revision(quotation_id: str, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.get("/{quotation_id}/pdf")
+@router.api_route("/{quotation_id}/pdf", methods=["GET", "HEAD"])
 def download_quotation_pdf(quotation_id: str, db: Session = Depends(get_db)):
     q = db.query(Quotation).filter(Quotation.id == quotation_id).first()
     if not q:
