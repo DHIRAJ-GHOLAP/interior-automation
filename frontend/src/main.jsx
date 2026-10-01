@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
+import './index.css';
 
 // Configure dynamic API base URL (supports direct Render backend URL or Cloudflare Pages proxy)
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');

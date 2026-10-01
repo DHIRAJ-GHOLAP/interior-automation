@@ -148,13 +148,14 @@ export default function App() {
       const res = await fetch(`/api/clients/${clientId}`, {
         method: 'DELETE'
       });
-      if (!res.ok) {
+      if (!res.ok && res.status !== 404) {
         throw new Error('Failed to delete client');
       }
       await fetchData();
       return true;
     } catch (e) {
       console.error(e);
+      await fetchData();
       alert('Error deleting client: ' + e.message);
       return false;
     }
@@ -196,14 +197,15 @@ export default function App() {
       const res = await fetch(`/api/materials/${materialId}`, {
         method: 'DELETE'
       });
-      if (res.ok) {
-        fetchData();
+      if (res.ok || res.status === 404) {
+        await fetchData();
       } else {
         const data = await res.json();
         alert(data.detail || 'Failed to delete material');
       }
     } catch (e) {
       console.error(e);
+      await fetchData();
       alert('Error deleting material');
     }
   };
@@ -244,7 +246,7 @@ export default function App() {
       const res = await fetch(`/api/projects/${projectId}`, {
         method: 'DELETE'
       });
-      if (!res.ok) throw new Error('Failed to delete project');
+      if (!res.ok && res.status !== 404) throw new Error('Failed to delete project');
       await fetchData();
       if (selectedProjectId === projectId) {
         setSelectedProjectId(null);
@@ -252,6 +254,7 @@ export default function App() {
       return true;
     } catch (e) {
       console.error(e);
+      await fetchData();
       alert('Error deleting project: ' + e.message);
       return false;
     }
@@ -263,11 +266,12 @@ export default function App() {
       const res = await fetch(`/api/quotations/${quotationId}`, {
         method: 'DELETE'
       });
-      if (!res.ok) throw new Error('Failed to delete quotation');
+      if (!res.ok && res.status !== 404) throw new Error('Failed to delete quotation');
       await fetchData();
       return true;
     } catch (e) {
       console.error(e);
+      await fetchData();
       alert('Error deleting quotation: ' + e.message);
       return false;
     }

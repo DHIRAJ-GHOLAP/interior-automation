@@ -311,6 +311,7 @@ export default function ProjectsView({
       fetchProjectDetails(activeProjDetail.id);
     } catch (e) {
       console.error(e);
+      fetchProjectDetails(activeProjDetail.id);
     }
   };
 
@@ -318,12 +319,13 @@ export default function ProjectsView({
     if (!confirm('Are you sure you want to permanently delete this room and all its measurements and BOQ items?')) return;
     try {
       const res = await fetch(`/api/projects/rooms/${roomId}`, { method: 'DELETE' });
-      if (res.ok) {
+      if (res.ok || res.status === 404) {
         fetchProjectDetails(activeProjDetail.id);
         if (onRefreshProjects) onRefreshProjects();
       }
     } catch (e) {
       console.error(e);
+      fetchProjectDetails(activeProjDetail.id);
       alert('Error deleting room: ' + e.message);
     }
   };
@@ -332,11 +334,12 @@ export default function ProjectsView({
     if (!confirm('Delete this measurement?')) return;
     try {
       const res = await fetch(`/api/projects/measurements/${measId}`, { method: 'DELETE' });
-      if (res.ok) {
+      if (res.ok || res.status === 404) {
         fetchProjectDetails(activeProjDetail.id);
       }
     } catch (e) {
       console.error(e);
+      fetchProjectDetails(activeProjDetail.id);
       alert('Error deleting measurement');
     }
   };

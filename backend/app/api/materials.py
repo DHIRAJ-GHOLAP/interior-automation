@@ -41,7 +41,7 @@ def update_material(material_id: str, mat_in: MaterialCreate, db: Session = Depe
 def delete_material(material_id: str, db: Session = Depends(get_db)):
     mat = db.query(Material).filter(Material.id == material_id).first()
     if not mat:
-        raise HTTPException(status_code=404, detail="Material not found")
+        return {"message": "Material already deleted or does not exist", "id": material_id}
     from ..models import BOQItem
     db.query(BOQItem).filter(BOQItem.material_id == material_id).update({BOQItem.material_id: None})
     db.delete(mat)

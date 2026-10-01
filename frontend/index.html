@@ -4,100 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="theme-color" content="#0f172a" />
     <title>More Construction and Interior — Automation Platform</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            screens: {
-              'xs': '375px',
-              'sm': '640px',
-              'md': '768px',
-              'lg': '1024px',
-              'xl': '1280px',
-            },
-            fontFamily: {
-              serif: ['"Playfair Display"', 'Georgia', 'serif'],
-              display: ['"Cinzel"', 'serif'],
-              sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-              mono: ['"JetBrains Mono"', 'monospace'],
-            },
-            colors: {
-              primary: {
-                50: '#eff6ff',
-                100: '#dbeafe',
-                500: '#3b82f6',
-                600: '#2563eb',
-                700: '#1d4ed8',
-              },
-              luxury: {
-                obsidian: '#090d16',
-                midnight: '#0e1422',
-                charcoal: '#141c2e',
-                surface: '#1b253b',
-                card: '#1f2a42',
-                gold: '#d4af37',
-                champagne: '#f6e7cb',
-                bronze: '#996515',
-                amber: '#b45309',
-              }
-            }
-          }
-        }
-      }
-    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-      body {
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        -webkit-font-smoothing: antialiased;
-      }
-      .font-serif {
-        font-family: 'Playfair Display', Georgia, serif;
-      }
-      .font-display {
-        font-family: 'Cinzel', serif;
-      }
-      code, pre {
-        font-family: 'JetBrains Mono', monospace;
-      }
-      /* Prevent iOS auto-zoom on inputs */
-      @media screen and (max-width: 768px) {
-        input, select, textarea {
-          font-size: 16px !important;
-        }
-      }
-      /* Smooth touch scrolling & tap highlighting */
-      * {
-        -webkit-tap-highlight-color: transparent;
-      }
-      /* iPhone 15 Safe Area Utilities */
-      .safe-pb {
-        padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
-      }
-      .safe-pt {
-        padding-top: max(0.5rem, env(safe-area-inset-top));
-      }
-      /* Custom scrollbar */
-      ::-webkit-scrollbar {
-        width: 5px;
-        height: 5px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #f1f5f9;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 4px;
-      }
-    </style>
   </head>
   <body class="bg-slate-50 text-slate-800 antialiased min-h-screen selection:bg-blue-600 selection:text-white">
     <div id="root"></div>

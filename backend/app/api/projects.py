@@ -188,7 +188,7 @@ def update_project(project_id: str, proj_in: ProjectCreate, db: Session = Depend
 def delete_project(project_id: str, db: Session = Depends(get_db)):
     p = db.query(Project).filter(Project.id == project_id).first()
     if not p:
-        raise HTTPException(status_code=404, detail="Project not found")
+        return {"message": "Project already deleted or does not exist", "id": project_id}
 
     # Clear self-referential parent_quotation_id on quotations belonging to this project
     quote_ids = [q.id for q in p.quotations]
@@ -324,17 +324,17 @@ def add_boq_item(room_id: str, boq_in: BOQItemCreate, db: Session = Depends(get_
 def delete_boq_item(boq_id: str, db: Session = Depends(get_db)):
     boq = db.query(BOQItem).filter(BOQItem.id == boq_id).first()
     if not boq:
-        raise HTTPException(status_code=404, detail="BOQ item not found")
+        return {"message": "BOQ item already deleted or does not exist", "id": boq_id}
     db.delete(boq)
     db.commit()
-    return {"message": "BOQ item deleted"}
+    return {"message": "BOQ item deleted", "id": boq_id}
 
 # Delete Room
 @router.delete("/rooms/{room_id}")
 def delete_room(room_id: str, db: Session = Depends(get_db)):
     room = db.query(Room).filter(Room.id == room_id).first()
     if not room:
-        raise HTTPException(status_code=404, detail="Room not found")
+        return {"message": "Room already deleted or does not exist", "id": room_id}
     project_id = room.project_id
     db.delete(room)
     db.commit()
@@ -345,7 +345,7 @@ def delete_room(room_id: str, db: Session = Depends(get_db)):
 def delete_measurement(meas_id: str, db: Session = Depends(get_db)):
     m = db.query(Measurement).filter(Measurement.id == meas_id).first()
     if not m:
-        raise HTTPException(status_code=404, detail="Measurement not found")
+        return {"message": "Measurement already deleted or does not exist", "id": meas_id}
     db.delete(m)
     db.commit()
     return {"message": "Measurement deleted", "id": meas_id}

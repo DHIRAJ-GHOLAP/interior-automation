@@ -110,7 +110,7 @@ def update_quotation_status(quotation_id: str, status: str, db: Session = Depend
 def delete_quotation(quotation_id: str, db: Session = Depends(get_db)):
     q = db.query(Quotation).filter(Quotation.id == quotation_id).first()
     if not q:
-        raise HTTPException(status_code=404, detail="Quotation not found")
+        return {"message": "Quotation already deleted or does not exist", "id": quotation_id}
 
     # Unlink any child revisions pointing to this quotation
     db.query(Quotation).filter(Quotation.parent_quotation_id == quotation_id).update(

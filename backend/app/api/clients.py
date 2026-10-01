@@ -94,7 +94,7 @@ def update_client(client_id: str, client_in: ClientCreate, db: Session = Depends
 def delete_client(client_id: str, db: Session = Depends(get_db)):
     client = db.query(Client).filter(Client.id == client_id).first()
     if not client:
-        raise HTTPException(status_code=404, detail="Client not found")
+        return {"message": "Client already deleted or does not exist", "id": client_id}
     
     # Clean up WhatsApp logs for this client
     from ..models import WhatsAppLog
