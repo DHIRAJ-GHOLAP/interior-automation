@@ -34,8 +34,13 @@ app = FastAPI(
 
 @app.on_event("startup")
 def on_startup():
-    # Database tables and catalog seed are already verified in Neon PostgreSQL
-    pass
+    try:
+        Base.metadata.create_all(bind=engine)
+        db = SessionLocal()
+        seed_database(db)
+        db.close()
+    except Exception as e:
+        print(f"Startup DB init notice: {e}")
 
 # 3. Security & Telemetry Middlewares
 class SecurityAndTracingMiddleware(BaseHTTPMiddleware):
@@ -58,23 +63,36 @@ class SecurityAndTracingMiddleware(BaseHTTPMiddleware):
 
 app.add_middleware(SecurityAndTracingMiddleware)
 
-# 4. CORS Configuration (Supports Cloudflare Pages, Render, and Custom Domains)
-origins = settings.CORS_ORIGINS if isinstance(settings.CORS_ORIGINS, list) else ["*"]
+# 4. CORS Configuration (Explicitly supports more.gholap.xyz, Cloudflare Pages, Render, and Localhost)
+origins = [
+    "https://more.gholap.xyz",
+    "https://gholap.xyz",
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:8000"
+]
+if isinstance(settings.CORS_ORIGINS, list):
+    for o in settings.CORS_ORIGINS:
+        if o != "*" and o not in origins:
+            origins.append(o)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_origin_regex=r"https://.*\.pages\.dev|https://.*\.onrender\.com|http://localhost:\d+|http://127\.0\.0\.1:\d+",
+    allow_origin_regex=r"https://.*\.gholap\.xyz|https://gholap\.xyz|https://.*\.pages\.dev|https://.*\.onrender\.com|http://localhost:\d+|http://127\.0\.0\.1:\d+",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["X-Request-ID", "X-Response-Time"]
 )
 
-# 5. Global Exception Handlers for Production Stability
+# 5. Global Exception Handlers with explicit CORS support
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     req_id = request.headers.get("X-Request-ID", "unknown")
+    origin = request.headers.get("origin", "*")
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={
@@ -82,8 +100,15 @@ async def global_exception_handler(request: Request, exc: Exception):
             "error": {
                 "code": "INTERNAL_SERVER_ERROR",
                 "message": "An unexpected error occurred while processing your request.",
+                "details": str(exc),
                 "request_id": req_id
             }
+        },
+        headers={
+            "Access-Control-Allow-Origin": origin if origin != "null" else "*",
+            "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Headers": "*",
         }
     )
 

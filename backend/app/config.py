@@ -9,10 +9,10 @@ class Settings(BaseSettings):
     ENV: str = os.getenv("ENV", "production")
     DEBUG: bool = os.getenv("DEBUG", "False").lower() in ("true", "1", "yes")
 
-    # Database: defaults to SQLite for zero-config local run, supports PostgreSQL in prod
+    # Database: defaults to Neon PostgreSQL, supports SQLite or override via env
     DATABASE_URL: str = os.getenv(
         "DATABASE_URL",
-        f"sqlite:///{os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'interior.db')}"
+        "postgresql://neondb_owner:npg_NIk2dKUDTX7R@ep-flat-credit-b4ehl9tu-pooler.c-6.us-east-2.aws.neon.tech/moreint?sslmode=require&channel_binding=require"
     )
 
     # Security & JWT

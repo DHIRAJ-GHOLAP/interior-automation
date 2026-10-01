@@ -18,5 +18,7 @@ services:
         value: "false"
       - key: SECRET_KEY
         generateValue: true
+      - key: DATABASE_URL
+        value: "postgresql://neondb_owner:npg_NIk2dKUDTX7R@ep-flat-credit-b4ehl9tu-pooler.c-6.us-east-2.aws.neon.tech/moreint?sslmode=require&channel_binding=require"
       - key: CORS_ORIGINS
-        value: "*"
+        value: "https://more.gholap.xyz,https://gholap.xyz,http://localhost:5173,http://localhost:3000"
