@@ -28,6 +28,7 @@ export default function ProjectsView({
   selectedProjectId, 
   onSelectProject, 
   onCreateProject, 
+  onDeleteProject,
   onGenerateQuotation,
   autoOpenCreateModal,
   prefilledClientId,
@@ -313,6 +314,33 @@ export default function ProjectsView({
     }
   };
 
+  const handleDeleteRoom = async (roomId) => {
+    if (!confirm('Are you sure you want to permanently delete this room and all its measurements and BOQ items?')) return;
+    try {
+      const res = await fetch(`/api/projects/rooms/${roomId}`, { method: 'DELETE' });
+      if (res.ok) {
+        fetchProjectDetails(activeProjDetail.id);
+        if (onRefreshProjects) onRefreshProjects();
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Error deleting room: ' + e.message);
+    }
+  };
+
+  const handleDeleteMeasurement = async (measId) => {
+    if (!confirm('Delete this measurement?')) return;
+    try {
+      const res = await fetch(`/api/projects/measurements/${measId}`, { method: 'DELETE' });
+      if (res.ok) {
+        fetchProjectDetails(activeProjDetail.id);
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Error deleting measurement');
+    }
+  };
+
   const handleGenerateQuoteSubmit = async (e) => {
     e.preventDefault();
     if (!activeProjDetail) return;
@@ -381,48 +409,57 @@ export default function ProjectsView({
       ) : activeProjDetail ? (
         <div className="space-y-5 sm:space-y-6">
           {/* Project Info & Financial Strip */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-xs">
+          <div className="bg-white rounded-3xl border border-amber-500/25 p-4 sm:p-6 shadow-[0_4px_25px_rgba(217,119,6,0.06)]">
             <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
               <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="text-base sm:text-lg font-bold text-slate-900">{activeProjDetail.name}</h3>
-                  <span className="text-[10px] sm:text-xs bg-blue-50 text-blue-700 font-bold px-2 py-0.5 rounded-full border border-blue-200">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <h3 className="text-lg sm:text-2xl font-serif font-bold text-slate-900 tracking-tight">{activeProjDetail.name}</h3>
+                  <span className="text-[10px] sm:text-xs bg-amber-500/10 text-amber-800 font-bold px-2.5 py-0.5 rounded-full border border-amber-500/25">
                     {activeProjDetail.property_type}
                   </span>
-                  <span className="text-[10px] sm:text-xs bg-slate-100 text-slate-700 font-semibold px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] sm:text-xs bg-slate-100 text-slate-700 font-semibold px-2.5 py-0.5 rounded-full">
                     {activeProjDetail.status}
                   </span>
+                  {onDeleteProject && (
+                    <button
+                      onClick={() => onDeleteProject(activeProjDetail.id)}
+                      className="p-1.5 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 transition active:scale-95 border border-transparent hover:border-rose-200"
+                      title="Permanently Delete Project"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
                 <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs text-slate-500 mt-2">
                   <div className="flex items-center gap-1">
-                    <User className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Client: <strong className="text-slate-700">{activeProjDetail.client?.name}</strong></span>
+                    <User className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Client: <strong className="text-slate-800">{activeProjDetail.client?.name}</strong></span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                    <MapPin className="w-3.5 h-3.5 text-amber-600" />
                     <span>{activeProjDetail.location || activeProjDetail.client?.city}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <Building className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Carpet: <strong className="text-slate-700">{activeProjDetail.carpet_area} sq.ft</strong></span>
+                    <Building className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Carpet: <strong className="text-slate-800">{activeProjDetail.carpet_area} sq.ft</strong></span>
                   </div>
                 </div>
               </div>
 
               {/* Financial Box: Cost, Client Price & Margin */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-100">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-gradient-to-br from-slate-50 to-amber-50/20 p-3 sm:p-4 rounded-2xl border border-slate-200/80">
                 <div className="grid grid-cols-3 gap-2 text-center sm:text-right">
                   <div>
                     <div className="text-[9px] uppercase font-bold text-slate-400">Cost</div>
                     <div className="text-xs sm:text-sm font-semibold text-slate-600 truncate">{formatINR(activeProjDetail.summary?.total_cost)}</div>
                   </div>
-                  <div className="border-x border-slate-200 px-2">
-                    <div className="text-[9px] uppercase font-bold text-blue-600">Client Amt</div>
-                    <div className="text-xs sm:text-base font-bold text-blue-700 truncate">{formatINR(activeProjDetail.summary?.total_amount)}</div>
+                  <div className="border-x border-slate-200 px-2.5">
+                    <div className="text-[9px] uppercase font-bold text-amber-700">Proposal Value</div>
+                    <div className="text-xs sm:text-base font-bold text-slate-900 truncate font-mono">{formatINR(activeProjDetail.summary?.total_amount)}</div>
                   </div>
                   <div>
-                    <div className="text-[9px] uppercase font-bold text-emerald-600">Margin</div>
-                    <div className="text-xs sm:text-sm font-bold text-emerald-700 truncate">
+                    <div className="text-[9px] uppercase font-bold text-emerald-600">Gross Margin</div>
+                    <div className="text-xs sm:text-sm font-bold text-emerald-700 truncate font-mono">
                       {formatINR(activeProjDetail.summary?.total_margin)}
                     </div>
                   </div>
@@ -430,9 +467,9 @@ export default function ProjectsView({
 
                 <button
                   onClick={() => setShowGenerateQuoteModal(true)}
-                  className="flex items-center justify-center gap-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 active:scale-95 text-white text-xs font-bold py-2.5 px-4 rounded-xl transition shadow-md shadow-blue-500/20 touch-manipulation"
+                  className="flex items-center justify-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 active:scale-95 text-slate-950 text-xs font-extrabold py-2.5 px-4 rounded-xl transition shadow-[0_4px_15px_rgba(217,119,6,0.25)] border border-amber-300/40 touch-manipulation"
                 >
-                  <FileText className="w-4 h-4" />
+                  <FileText className="w-4 h-4 text-slate-950" />
                   <span>Generate Quotation</span>
                 </button>
               </div>
@@ -441,17 +478,17 @@ export default function ProjectsView({
 
           {/* Rooms Header */}
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
-              <span>Rooms Breakdown</span>
-              <span className="text-xs bg-slate-200/80 text-slate-700 px-2 py-0.2 rounded-full font-medium">
+            <h3 className="font-serif font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
+              <span>Rooms & Spaces Breakdown</span>
+              <span className="text-xs bg-amber-500/10 text-amber-800 border border-amber-500/25 px-2.5 py-0.5 rounded-full font-semibold">
                 {activeProjDetail.rooms?.length || 0}
               </span>
             </h3>
             <button
               onClick={() => setShowAddRoomModal(true)}
-              className="flex items-center gap-1 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition shadow-xs touch-manipulation"
+              className="flex items-center gap-1 bg-[#090d16] hover:bg-[#131b2e] active:scale-95 text-amber-200 text-xs font-bold px-3.5 py-2 rounded-xl transition shadow-sm border border-amber-500/25 touch-manipulation"
             >
-              <Plus className="w-3.5 h-3.5" />
+              <Plus className="w-3.5 h-3.5 text-amber-400" />
               <span>Add Room</span>
             </button>
           </div>
@@ -462,40 +499,47 @@ export default function ProjectsView({
               const totalRoomMeasurementsSqft = room.measurements?.reduce((acc, m) => acc + (m.calculated_sqft || 0), 0) || 0;
 
               return (
-                <div key={room.id} className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+                <div key={room.id} className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden hover:border-amber-500/30 transition">
                   {/* Room Header */}
-                  <div className="bg-slate-900 text-white p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="bg-[#090d16] text-white p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-amber-500/20">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-500/20 text-blue-300 flex items-center justify-center font-bold text-xs sm:text-sm">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 flex items-center justify-center font-bold text-xs sm:text-sm shadow-xs font-display">
                         {room.name.charAt(0)}
                       </div>
                       <div>
-                        <h4 className="font-bold text-sm sm:text-base text-white">{room.name}</h4>
-                        <div className="text-[10px] sm:text-[11px] text-slate-400">{room.floor || 'Floor'} • {room.boq_items?.length || 0} BOQ Items</div>
+                        <h4 className="font-serif font-bold text-sm sm:text-base text-amber-50">{room.name}</h4>
+                        <div className="text-[10px] sm:text-[11px] text-amber-200/60">{room.floor || 'Floor'} • {room.boq_items?.length || 0} BOQ Items</div>
                       </div>
                     </div>
 
                     <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2.5 w-full sm:w-auto pt-1 sm:pt-0 border-t border-slate-800 sm:border-0">
-                      <div className="text-left sm:text-right">
-                        <div className="text-[9px] text-slate-400 uppercase font-semibold">Total</div>
-                        <div className="text-xs sm:text-sm font-bold text-emerald-400">
+                      <div className="text-left sm:text-right pr-1">
+                        <div className="text-[9px] text-amber-200/50 uppercase font-semibold">Total</div>
+                        <div className="text-xs sm:text-sm font-bold text-emerald-400 font-mono">
                           {formatINR(room.room_amount)}
                         </div>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <button
                           onClick={() => setShowAddMeasurementModal(room.id)}
-                          className="flex items-center gap-1 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs px-2.5 py-1.5 rounded-lg transition touch-manipulation font-semibold"
+                          className="flex items-center gap-1 bg-[#131b2e] hover:bg-[#1a253c] active:scale-95 text-amber-200 text-xs px-2.5 py-1.5 rounded-xl transition touch-manipulation font-semibold border border-amber-500/20"
                         >
-                          <Ruler className="w-3.5 h-3.5 text-blue-400" />
+                          <Ruler className="w-3.5 h-3.5 text-amber-400" />
                           <span>+ Measure</span>
                         </button>
                         <button
                           onClick={() => setShowAddBOQModal(room.id)}
-                          className="flex items-center gap-1 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white text-xs px-2.5 py-1.5 rounded-lg transition font-bold touch-manipulation"
+                          className="flex items-center gap-1 bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 text-xs px-2.5 py-1.5 rounded-xl transition font-extrabold touch-manipulation shadow-xs"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>+ BOQ</span>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteRoom(room.id)}
+                          className="p-1.5 text-slate-400 hover:text-rose-400 active:scale-95 transition rounded-xl hover:bg-rose-950/40 border border-transparent hover:border-rose-500/30"
+                          title="Delete entire room"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
@@ -503,10 +547,10 @@ export default function ProjectsView({
 
                   {/* Measurements Sub-bar */}
                   {room.measurements && room.measurements.length > 0 && (
-                    <div className="bg-slate-50 border-b border-slate-200/90 p-3 sm:p-3.5">
+                    <div className="bg-amber-50/20 border-b border-slate-100 p-3 sm:p-3.5">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-slate-700">
-                          <Ruler className="w-3.5 h-3.5 text-blue-600" />
+                          <Ruler className="w-3.5 h-3.5 text-amber-600" />
                           <span>Room Dimensions ({totalRoomMeasurementsSqft.toFixed(1)} sq.ft Total)</span>
                         </div>
                         <span className="text-[10px] text-slate-500 hidden sm:inline">Auto-calculated: Height × Width</span>
@@ -516,9 +560,16 @@ export default function ProjectsView({
                           <div key={m.id} className="bg-white px-2.5 py-1 sm:py-1.5 rounded-xl border border-slate-200 text-[11px] sm:text-xs flex items-center gap-1.5 shadow-xs">
                             <span className="font-semibold text-slate-800">{m.label}:</span>
                             <span className="text-slate-500 font-mono">{m.height}×{m.width}</span>
-                            <span className="bg-blue-50 text-blue-700 font-bold px-1.5 py-0.2 rounded text-[10px] sm:text-[11px]">
+                            <span className="bg-amber-500/10 text-amber-800 font-bold px-1.5 py-0.2 rounded text-[10px] sm:text-[11px]">
                               = {m.calculated_sqft} sq.ft
                             </span>
+                            <button
+                              onClick={() => handleDeleteMeasurement(m.id)}
+                              className="text-slate-400 hover:text-rose-600 p-0.5 ml-0.5 transition"
+                              title="Delete measurement"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
                           </div>
                         ))}
                       </div>

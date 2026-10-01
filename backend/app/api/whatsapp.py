@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from datetime import datetime, timezone
 from pydantic import BaseModel
 from typing import Optional
@@ -17,13 +17,12 @@ class InboundWhatsAppMessage(BaseModel):
 
 @router.get("/logs")
 def get_whatsapp_logs(db: Session = Depends(get_db)):
-    logs = db.query(WhatsAppLog).order_by(WhatsAppLog.created_at.desc()).all()
+    logs = db.query(WhatsAppLog).options(joinedload(WhatsAppLog.client)).order_by(WhatsAppLog.created_at.desc()).all()
     results = []
     for l in logs:
-        client = db.query(Client).filter(Client.id == l.client_id).first()
         results.append({
             "id": l.id,
-            "client_name": client.name if client else "N/A",
+            "client_name": l.client.name if l.client else "N/A",
             "recipient_phone": l.recipient_phone,
             "message_type": l.message_type,
             "message_body": l.message_body,

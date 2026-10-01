@@ -267,3 +267,5 @@ class WhatsAppLog(Base):
     message_body = Column(Text, nullable=False)
     status = Column(String(30), default="Sent") # Sent, Delivered, Read, Failed
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    client = relationship("Client")

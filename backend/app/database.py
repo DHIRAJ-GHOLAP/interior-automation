@@ -12,14 +12,15 @@ if DATABASE_URL.startswith("sqlite"):
         connect_args={"check_same_thread": False}
     )
 else:
-    # Production PostgreSQL pool configuration
+    # Production PostgreSQL pool configuration optimized for Neon pgBouncer
     engine = create_engine(
         DATABASE_URL,
         echo=False,
-        pool_size=20,
-        max_overflow=10,
+        pool_size=10,
+        max_overflow=5,
         pool_pre_ping=True,
-        pool_recycle=3600
+        pool_recycle=300,
+        connect_args={"connect_timeout": 10}
     )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

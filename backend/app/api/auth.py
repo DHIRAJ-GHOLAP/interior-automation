@@ -150,6 +150,24 @@ def get_current_profile(
         }
     }
 
+@router.get("/tenant")
+def get_tenant_settings(tenant: Tenant = Depends(get_current_tenant)):
+    return {
+        "id": tenant.id,
+        "name": tenant.name,
+        "subdomain": tenant.subdomain,
+        "company_phone": tenant.company_phone,
+        "company_email": tenant.company_email,
+        "gst_number": tenant.gst_number,
+        "address": tenant.address,
+        "city": tenant.city,
+        "bank_name": tenant.bank_name,
+        "bank_account_no": tenant.bank_account_no,
+        "bank_ifsc": tenant.bank_ifsc,
+        "upi_id": tenant.upi_id,
+        "plan": tenant.plan
+    }
+
 @router.put("/tenant")
 def update_tenant_settings(
     req: TenantUpdate,

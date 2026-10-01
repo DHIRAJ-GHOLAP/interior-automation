@@ -47,7 +47,7 @@ class ProjectOut(ProjectBase):
 
 # Room Schemas
 class RoomBase(BaseModel):
-    project_id: str
+    project_id: Optional[str] = None
     name: str
     floor: Optional[str] = "Ground Floor"
     description: Optional[str] = None
@@ -62,7 +62,7 @@ class RoomOut(RoomBase):
 
 # Measurement Schemas
 class MeasurementCreate(BaseModel):
-    room_id: str
+    room_id: Optional[str] = None
     label: str
     height: float
     width: float
@@ -108,7 +108,7 @@ class MaterialOut(MaterialBase):
 
 # BOQ Item Schemas
 class BOQItemCreate(BaseModel):
-    room_id: str
+    room_id: Optional[str] = None
     material_id: Optional[str] = None
     item_title: str
     category: Optional[str] = "Cabinetry"

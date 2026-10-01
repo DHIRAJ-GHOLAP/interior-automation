@@ -161,9 +161,9 @@ export default function ClientsView({
           </div>
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow-xs whitespace-nowrap touch-manipulation"
+            className="flex items-center justify-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 active:scale-95 text-slate-950 text-xs font-extrabold px-3.5 py-2.5 rounded-xl transition shadow-xs whitespace-nowrap touch-manipulation border border-amber-300/40"
           >
-            <UserPlus className="w-4 h-4" />
+            <UserPlus className="w-4 h-4 text-slate-950" />
             <span className="hidden xs:inline">Add Client</span>
           </button>
         </div>
@@ -172,7 +172,7 @@ export default function ClientsView({
       {/* Grid of Clients */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
         {filteredClients.length === 0 ? (
-          <div className="col-span-full bg-white rounded-2xl border border-slate-200/80 p-10 text-center text-xs text-slate-500">
+          <div className="col-span-full bg-white rounded-3xl border border-amber-500/20 p-12 text-center text-xs text-slate-500">
             No clients found matching your search.
           </div>
         ) : (
@@ -184,24 +184,24 @@ export default function ClientsView({
             return (
               <div
                 key={client.id}
-                className="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-xs hover:shadow-sm transition flex flex-col justify-between"
+                className="bg-white rounded-3xl border border-amber-500/25 p-4 sm:p-5 shadow-[0_4px_25px_rgba(217,119,6,0.06)] hover:border-amber-500/40 transition flex flex-col justify-between"
               >
                 <div>
                   {/* Card Top: Client info + quick actions */}
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-amber-300 to-amber-600 text-slate-950 flex items-center justify-center font-bold text-sm shadow-xs shrink-0 font-display">
                         {client.name.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-tight">{client.name}</h3>
+                        <h3 className="font-serif font-bold text-slate-900 text-sm sm:text-base leading-tight tracking-tight">{client.name}</h3>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="flex items-center gap-1 text-[11px] text-slate-500">
-                            <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+                            <MapPin className="w-3 h-3 text-amber-600 shrink-0" />
                             <span>{client.city || 'Mumbai'}</span>
                           </span>
-                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
-                            <Building className="w-2.5 h-2.5 text-slate-400" />
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-800 border border-amber-500/20">
+                            <Building className="w-2.5 h-2.5 text-amber-600" />
                             {projectCount} {projectCount === 1 ? 'Project' : 'Projects'}
                           </span>
                         </div>

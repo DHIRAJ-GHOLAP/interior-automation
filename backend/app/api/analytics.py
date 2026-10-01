@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from ..database import get_db
 from ..models import Quotation, Project, Client, ClientResponse, FollowUp
@@ -9,15 +9,23 @@ router = APIRouter(prefix="/api/analytics", tags=["Analytics"])
 @router.get("/dashboard")
 def get_dashboard_analytics(db: Session = Depends(get_db)):
     total_clients = db.query(Client).count()
-    total_projects = db.query(Project).count()
     
+    # 1. Project counts by status in a single query
+    proj_status_rows = db.query(Project.status, func.count(Project.id)).group_by(Project.status).all()
+    proj_status_counts = {status: count for status, count in proj_status_rows}
+    total_projects = sum(proj_status_counts.values())
+
+    # 2. Quotations
     quotes = db.query(Quotation).all()
     quotes_created = len(quotes)
     quotes_sent = sum(1 for q in quotes if q.status in ["Quotation Sent", "Viewed", "Responded", "Interested", "Revision Requested", "Accepted", "Confirmed"])
     responses = db.query(ClientResponse).count()
     interested_count = sum(1 for q in quotes if q.status in ["Interested", "Accepted", "Confirmed"])
     negotiations = sum(1 for q in quotes if q.status in ["Revision Requested", "Negotiation"])
-    won_projects = sum(1 for q in quotes if q.status in ["Accepted", "Confirmed"]) + db.query(Project).filter(Project.status.in_(["Confirmed", "In Progress", "Completed"])).count()
+
+    won_project_ids = {q.project_id for q in quotes if q.status in ["Accepted", "Confirmed"] and q.project_id}
+    won_proj_db_ids = {row[0] for row in db.query(Project.id).filter(Project.status.in_(["Confirmed", "In Progress", "Completed"])).all()}
+    won_projects = len(won_project_ids | won_proj_db_ids)
 
     total_quote_value = sum(q.total_amount for q in quotes)
     total_won_value = sum(q.total_amount for q in quotes if q.status in ["Accepted", "Confirmed", "In Progress", "Completed"])
@@ -29,16 +37,26 @@ def get_dashboard_analytics(db: Session = Depends(get_db)):
 
     # Pipeline stage counts
     pipeline = {
-        "new": db.query(Project).filter(Project.status == "New").count(),
-        "measurement": db.query(Project).filter(Project.status == "Measurement Pending").count(),
+        "new": proj_status_counts.get("New", 0),
+        "measurement": proj_status_counts.get("Measurement Pending", 0),
         "draft": sum(1 for q in quotes if q.status == "Draft"),
         "sent": quotes_sent,
         "negotiation": negotiations,
         "won": won_projects
     }
 
-    # Recent activity
-    recent_responses = db.query(ClientResponse).order_by(ClientResponse.responded_at.desc()).limit(5).all()
+    # Recent activity with eager loading to prevent N+1 queries
+    recent_responses = (
+        db.query(ClientResponse)
+        .options(
+            joinedload(ClientResponse.quotation)
+            .joinedload(Quotation.project)
+            .joinedload(Project.client)
+        )
+        .order_by(ClientResponse.responded_at.desc())
+        .limit(5)
+        .all()
+    )
     activity = []
     for r in recent_responses:
         q = r.quotation

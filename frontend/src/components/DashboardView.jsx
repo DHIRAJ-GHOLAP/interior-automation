@@ -46,84 +46,90 @@ export default function DashboardView({ analytics, followupsDue, onSelectQuotati
     }).format(val || 0);
   };
 
+  const currentMonthYear = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
   return (
     <div className="space-y-5 sm:space-y-6">
       {/* Top Banner: Urgency & Action */}
       {followupsDue && followupsDue.length > 0 && (
-        <div className="bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-amber-500/10 border border-amber-200/90 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 shadow-xs">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 sm:p-3 bg-amber-500 text-white rounded-xl shadow-xs shrink-0">
+        <div className="bg-gradient-to-r from-amber-500/15 via-rose-500/10 to-amber-500/15 border border-amber-400/40 rounded-3xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 shadow-[0_4px_25px_rgba(217,119,6,0.12)]">
+          <div className="flex items-center gap-3.5">
+            <div className="p-2.5 sm:p-3 bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 font-bold rounded-2xl shadow-[0_0_15px_rgba(217,119,6,0.35)] shrink-0">
               <Clock className="w-5 h-5 animate-pulse" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-900 text-xs sm:text-sm">
-                ⚠️ {followupsDue.length} Follow-ups Require Action Today!
+              <h3 className="font-serif font-bold text-slate-900 text-xs sm:text-sm">
+                Attention Required: {followupsDue.length} Client Follow-ups Due Today
               </h3>
               <p className="text-[11px] sm:text-xs text-slate-600 mt-0.5">
-                Responding within 48h increases win rates by 68%.
+                Luxury interior prospects convert 68% faster when engaged within 48 hours of proposal delivery.
               </p>
             </div>
           </div>
           <button
             onClick={() => onSwitchTab('followups')}
-            className="w-full sm:w-auto bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-xs flex items-center justify-center gap-2 whitespace-nowrap touch-manipulation"
+            className="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 active:scale-95 text-slate-950 text-xs font-extrabold px-4 py-2.5 rounded-xl transition shadow-sm flex items-center justify-center gap-2 whitespace-nowrap touch-manipulation"
           >
-            Review Follow-ups &rarr;
+            Review Cadence &rarr;
           </button>
         </div>
       )}
 
       {/* Main KPI Row: 2 columns on mobile, 4 on desktop */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-sm transition">
-          <div className="flex items-center justify-between text-slate-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-1.5">
-            <span>Quotes Value</span>
-            <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
+        {/* Total Quotations Value */}
+        <div className="bg-gradient-to-br from-white via-amber-50/15 to-white p-4 sm:p-5 rounded-3xl border border-amber-500/25 shadow-[0_4px_20px_rgba(217,119,6,0.06)] hover:border-amber-500/50 hover:shadow-[0_8px_30px_rgba(217,119,6,0.12)] transition duration-200">
+          <div className="flex items-center justify-between text-amber-700 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-1.5 font-display">
+            <span>Portfolio Value</span>
+            <div className="p-1.5 bg-amber-500/10 text-amber-600 rounded-xl border border-amber-500/20">
               <IndianRupee className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-lg sm:text-2xl font-extrabold text-slate-900 truncate">{formatINR(kpis.total_quotation_value)}</div>
+          <div className="text-lg sm:text-2xl font-serif font-extrabold text-slate-900 truncate tracking-tight">{formatINR(kpis.total_quotation_value)}</div>
           <div className="text-[10px] sm:text-xs text-slate-500 mt-1 truncate">
-            <strong className="text-blue-600">{kpis.quotes_created}</strong> Quotes Created
+            <strong className="text-amber-600 font-semibold">{kpis.quotes_created}</strong> Proposals Issued
           </div>
         </div>
 
-        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-sm transition">
-          <div className="flex items-center justify-between text-slate-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-1.5">
-            <span>Projects Won</span>
-            <div className="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg">
+        {/* Projects Won */}
+        <div className="bg-gradient-to-br from-white via-emerald-50/15 to-white p-4 sm:p-5 rounded-3xl border border-emerald-500/25 shadow-[0_4px_20px_rgba(16,185,129,0.06)] hover:border-emerald-500/50 hover:shadow-[0_8px_30px_rgba(16,185,129,0.12)] transition duration-200">
+          <div className="flex items-center justify-between text-emerald-700 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-1.5 font-display">
+            <span>Contracts Locked</span>
+            <div className="p-1.5 bg-emerald-500/10 text-emerald-600 rounded-xl border border-emerald-500/20">
               <Award className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-lg sm:text-2xl font-extrabold text-emerald-600 truncate">{formatINR(kpis.won_projects_value)}</div>
+          <div className="text-lg sm:text-2xl font-serif font-extrabold text-emerald-600 truncate tracking-tight">{formatINR(kpis.won_projects_value)}</div>
           <div className="text-[10px] sm:text-xs text-slate-500 mt-1 truncate">
-            <strong className="text-emerald-700">{kpis.projects_won}</strong> Contracts Locked 🎯
+            <strong className="text-emerald-700 font-semibold">{kpis.projects_won}</strong> Turnkey Wins 🎯
           </div>
         </div>
 
-        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-sm transition">
-          <div className="flex items-center justify-between text-slate-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-1.5">
+        {/* Gross Margin */}
+        <div className="bg-gradient-to-br from-white via-indigo-50/15 to-white p-4 sm:p-5 rounded-3xl border border-indigo-500/25 shadow-[0_4px_20px_rgba(99,102,241,0.06)] hover:border-indigo-500/50 hover:shadow-[0_8px_30px_rgba(99,102,241,0.12)] transition duration-200">
+          <div className="flex items-center justify-between text-indigo-700 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-1.5 font-display">
             <span>Gross Margin</span>
-            <div className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg">
+            <div className="p-1.5 bg-indigo-500/10 text-indigo-600 rounded-xl border border-indigo-500/20">
               <TrendingUp className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-lg sm:text-2xl font-extrabold text-indigo-600 truncate">{formatINR(kpis.gross_margin)}</div>
+          <div className="text-lg sm:text-2xl font-serif font-extrabold text-indigo-700 truncate tracking-tight">{formatINR(kpis.gross_margin)}</div>
           <div className="text-[10px] sm:text-xs text-slate-500 mt-1 truncate">
-            Avg Margin: <strong className="text-indigo-700">{kpis.average_margin_percent}%</strong>
+            Avg Yield: <strong className="text-indigo-800 font-bold">{kpis.average_margin_percent}%</strong>
           </div>
         </div>
 
-        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-sm transition">
-          <div className="flex items-center justify-between text-slate-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-1.5">
-            <span>Responses</span>
-            <div className="p-1.5 bg-purple-50 text-purple-600 rounded-lg">
+        {/* AI & Client Engagement */}
+        <div className="bg-gradient-to-br from-white via-purple-50/15 to-white p-4 sm:p-5 rounded-3xl border border-purple-500/25 shadow-[0_4px_20px_rgba(168,85,247,0.06)] hover:border-purple-500/50 hover:shadow-[0_8px_30px_rgba(168,85,247,0.12)] transition duration-200">
+          <div className="flex items-center justify-between text-purple-700 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-1.5 font-display">
+            <span>Engagement</span>
+            <div className="p-1.5 bg-purple-500/10 text-purple-600 rounded-xl border border-purple-500/20">
               <MessageCircle className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-lg sm:text-2xl font-extrabold text-purple-600">{kpis.client_responses}</div>
+          <div className="text-lg sm:text-2xl font-serif font-extrabold text-purple-700">{kpis.client_responses}</div>
           <div className="text-[10px] sm:text-xs text-slate-500 mt-1 truncate">
-            <strong className="text-emerald-600">{kpis.interested}</strong> Yes • <strong className="text-amber-600">{kpis.negotiations}</strong> Rev
+            <strong className="text-emerald-600 font-semibold">{kpis.interested}</strong> Ready • <strong className="text-amber-600 font-semibold">{kpis.negotiations}</strong> Revise
           </div>
         </div>
       </div>
@@ -131,14 +137,14 @@ export default function DashboardView({ analytics, followupsDue, onSelectQuotati
       {/* Pipeline Funnel & Stage Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
         {/* Visual Pipeline Funnel */}
-        <div className="lg:col-span-2 bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+        <div className="lg:col-span-2 bg-white p-4 sm:p-6 rounded-3xl border border-amber-500/20 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="font-bold text-slate-900 text-sm sm:text-base">Quotation & Sales Funnel</h3>
-              <p className="text-[11px] sm:text-xs text-slate-500">Live progression from measurement to project won</p>
+              <h3 className="font-serif font-bold text-slate-900 text-sm sm:text-base">Quotation & EPC Sales Pipeline</h3>
+              <p className="text-[11px] sm:text-xs text-slate-500">Real-time progression from site survey to locked execution</p>
             </div>
-            <span className="text-[10px] sm:text-xs bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-full">
-              September 2026
+            <span className="text-[10px] sm:text-xs bg-amber-500/10 text-amber-800 font-semibold px-2.5 py-1 rounded-full border border-amber-500/20 font-mono">
+              {currentMonthYear}
             </span>
           </div>
 
@@ -211,28 +217,32 @@ export default function DashboardView({ analytics, followupsDue, onSelectQuotati
         </div>
 
         {/* Recent Client Activity & AI Intent Feed */}
-        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+        <div className="bg-white p-4 sm:p-6 rounded-3xl border border-amber-500/20 shadow-sm flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-3.5">
-              <div className="flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-indigo-600" />
-                <h3 className="font-bold text-slate-900 text-xs sm:text-sm">AI Response Intelligence</h3>
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-indigo-500/10 text-indigo-600 rounded-xl border border-indigo-500/20">
+                  <Sparkles className="w-4 h-4 text-indigo-600" />
+                </div>
+                <h3 className="font-serif font-bold text-slate-900 text-xs sm:text-sm">AI Response Intelligence</h3>
               </div>
-              <span className="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-bold">Live</span>
+              <span className="text-[10px] bg-emerald-500/10 text-emerald-700 px-2.5 py-0.5 rounded-full font-bold border border-emerald-500/20 animate-pulse">
+                Live Feed
+              </span>
             </div>
 
             <div className="space-y-2.5">
               {analytics?.recent_responses && analytics.recent_responses.length > 0 ? (
                 analytics.recent_responses.map((resp, i) => (
-                  <div key={i} className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs space-y-1">
+                  <div key={i} className="p-3 bg-slate-50/80 rounded-2xl border border-slate-100 text-xs space-y-1 hover:border-amber-500/30 transition">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-slate-800">{resp.client_name}</span>
-                      <span className={`px-2 py-0.2 rounded-full text-[9px] font-bold ${
+                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
                         resp.response_type === 'Interested' 
-                          ? 'bg-emerald-100 text-emerald-800' 
+                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' 
                           : resp.response_type === 'Need Changes'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-blue-100 text-blue-800'
+                          ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                          : 'bg-blue-100 text-blue-800 border border-blue-200'
                       }`}>
                         {resp.response_type}
                       </span>
@@ -240,8 +250,9 @@ export default function DashboardView({ analytics, followupsDue, onSelectQuotati
                     {resp.comments && (
                       <p className="text-slate-600 italic text-[11px]">"{resp.comments}"</p>
                     )}
-                    <div className="text-[10px] text-indigo-600 font-semibold pt-0.5">
-                      🤖 Intent: {resp.intent}
+                    <div className="text-[10px] text-indigo-700 font-semibold pt-0.5 flex items-center gap-1">
+                      <span>🤖 Intent:</span>
+                      <span className="font-mono text-indigo-800">{resp.intent}</span>
                     </div>
                   </div>
                 ))
@@ -256,9 +267,10 @@ export default function DashboardView({ analytics, followupsDue, onSelectQuotati
           <div className="mt-3 pt-2.5 border-t border-slate-100">
             <button
               onClick={() => onSwitchTab('whatsapp_ai')}
-              className="w-full text-xs font-bold text-center text-blue-600 hover:text-blue-700 py-1.5 rounded-lg active:bg-blue-50 transition touch-manipulation"
+              className="w-full text-xs font-bold text-center text-amber-700 hover:text-amber-800 py-1.5 rounded-xl hover:bg-amber-50/50 transition touch-manipulation flex items-center justify-center gap-1.5"
             >
-              Open AI Message Hub &rarr;
+              <span>Explore WhatsApp AI Engine</span>
+              <span>&rarr;</span>
             </button>
           </div>
         </div>

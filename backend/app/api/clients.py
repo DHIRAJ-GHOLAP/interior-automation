@@ -95,6 +95,24 @@ def delete_client(client_id: str, db: Session = Depends(get_db)):
     client = db.query(Client).filter(Client.id == client_id).first()
     if not client:
         raise HTTPException(status_code=404, detail="Client not found")
+    
+    # Clean up WhatsApp logs for this client
+    from ..models import WhatsAppLog
+    db.query(WhatsAppLog).filter(WhatsAppLog.client_id == client_id).delete(synchronize_session=False)
+
+    # Safely clear self-referential parent_quotation_id for quotes under this client
+    proj_ids = [p.id for p in client.projects]
+    if proj_ids:
+        quotes = db.query(Quotation).filter(Quotation.project_id.in_(proj_ids)).all()
+        quote_ids = [q.id for q in quotes]
+        if quote_ids:
+            db.query(Quotation).filter(Quotation.parent_quotation_id.in_(quote_ids)).update(
+                {Quotation.parent_quotation_id: None}, synchronize_session=False
+            )
+            db.query(WhatsAppLog).filter(WhatsAppLog.quotation_id.in_(quote_ids)).update(
+                {WhatsAppLog.quotation_id: None}, synchronize_session=False
+            )
+
     db.delete(client)
     db.commit()
     return {"message": "Client deleted successfully"}

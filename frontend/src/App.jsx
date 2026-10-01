@@ -238,6 +238,41 @@ export default function App() {
     }
   };
 
+  const handleDeleteProject = async (projectId) => {
+    if (!window.confirm('Are you sure you want to permanently delete this project? All associated rooms, BOQ items, and quotations will be removed.')) return false;
+    try {
+      const res = await fetch(`/api/projects/${projectId}`, {
+        method: 'DELETE'
+      });
+      if (!res.ok) throw new Error('Failed to delete project');
+      await fetchData();
+      if (selectedProjectId === projectId) {
+        setSelectedProjectId(null);
+      }
+      return true;
+    } catch (e) {
+      console.error(e);
+      alert('Error deleting project: ' + e.message);
+      return false;
+    }
+  };
+
+  const handleDeleteQuotation = async (quotationId) => {
+    if (!window.confirm('Are you sure you want to delete this quotation?')) return false;
+    try {
+      const res = await fetch(`/api/quotations/${quotationId}`, {
+        method: 'DELETE'
+      });
+      if (!res.ok) throw new Error('Failed to delete quotation');
+      await fetchData();
+      return true;
+    } catch (e) {
+      console.error(e);
+      alert('Error deleting quotation: ' + e.message);
+      return false;
+    }
+  };
+
   // Open default portal view using the first available quotation
   const handleOpenDefaultPortal = () => {
     if (quotations.length > 0) {
@@ -311,6 +346,7 @@ export default function App() {
             selectedProjectId={selectedProjectId}
             onSelectProject={setSelectedProjectId}
             onCreateProject={handleCreateProject}
+            onDeleteProject={handleDeleteProject}
             onGenerateQuotation={handleGenerateQuotation}
             autoOpenCreateModal={autoOpenProjectModal}
             prefilledClientId={prefilledClientId}
@@ -335,6 +371,7 @@ export default function App() {
             quotations={quotations}
             onSelectQuotation={() => {}}
             onCreateRevision={handleCreateRevision}
+            onDeleteQuotation={handleDeleteQuotation}
             onOpenClientPortal={(token) => setPortalToken(token)}
             onRefresh={fetchData}
           />
@@ -375,9 +412,9 @@ export default function App() {
         />
       )}
 
-      {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
-        {tenant?.name || 'More Construction and Interior'} • Enterprise Interior SaaS Platform
+      {/* Luxury Footer */}
+      <footer className="bg-[#090d16] border-t border-amber-500/20 py-4 text-center text-xs text-amber-200/60 font-serif tracking-wider">
+        <span className="text-amber-300 font-bold">{tenant?.name || 'More Construction and Interior'}</span> • Bespoke Architectural & Interior Automation Platform
       </footer>
     </div>
   );

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from datetime import datetime, timezone
 from typing import List
 from ..database import get_db
@@ -9,11 +9,16 @@ router = APIRouter(prefix="/api/followups", tags=["Follow-ups"])
 
 @router.get("")
 def get_all_followups(db: Session = Depends(get_db)):
-    fus = db.query(FollowUp).order_by(FollowUp.scheduled_for.asc()).all()
+    fus = (
+        db.query(FollowUp)
+        .options(joinedload(FollowUp.client), joinedload(FollowUp.quotation))
+        .order_by(FollowUp.scheduled_for.asc())
+        .all()
+    )
     results = []
     for f in fus:
-        client = db.query(Client).filter(Client.id == f.client_id).first()
-        quote = db.query(Quotation).filter(Quotation.id == f.quotation_id).first()
+        client = f.client
+        quote = f.quotation
         results.append({
             "id": f.id,
             "step_number": f.step_number,
@@ -32,16 +37,20 @@ def get_all_followups(db: Session = Depends(get_db)):
 @router.get("/today")
 def get_today_followups(db: Session = Depends(get_db)):
     now = datetime.now(timezone.utc).replace(tzinfo=None)
-    fus = db.query(FollowUp).filter(
-        FollowUp.status == "Pending"
-    ).order_by(FollowUp.scheduled_for.asc()).all()
+    fus = (
+        db.query(FollowUp)
+        .options(joinedload(FollowUp.client), joinedload(FollowUp.quotation))
+        .filter(FollowUp.status == "Pending")
+        .order_by(FollowUp.scheduled_for.asc())
+        .all()
+    )
 
     due_today = []
     upcoming = []
 
     for f in fus:
-        client = db.query(Client).filter(Client.id == f.client_id).first()
-        quote = db.query(Quotation).filter(Quotation.id == f.quotation_id).first()
+        client = f.client
+        quote = f.quotation
         item = {
             "id": f.id,
             "step_number": f.step_number,

@@ -105,3 +105,27 @@ def update_quotation_status(quotation_id: str, status: str, db: Session = Depend
         FollowUpEngine.cancel_pending_followups(db, q.id, reason=f"Status changed to {status}")
     db.commit()
     return {"message": "Status updated", "status": status}
+
+@router.delete("/{quotation_id}")
+def delete_quotation(quotation_id: str, db: Session = Depends(get_db)):
+    q = db.query(Quotation).filter(Quotation.id == quotation_id).first()
+    if not q:
+        raise HTTPException(status_code=404, detail="Quotation not found")
+
+    # Unlink any child revisions pointing to this quotation
+    db.query(Quotation).filter(Quotation.parent_quotation_id == quotation_id).update(
+        {Quotation.parent_quotation_id: None}, synchronize_session=False
+    )
+
+    # Unlink any WhatsApp logs referencing this quotation
+    from ..models import WhatsAppLog
+    db.query(WhatsAppLog).filter(WhatsAppLog.quotation_id == quotation_id).update(
+        {WhatsAppLog.quotation_id: None}, synchronize_session=False
+    )
+
+    FollowUpEngine.cancel_pending_followups(db, q.id, reason="Quotation deleted")
+
+    db.delete(q)
+    db.commit()
+    return {"message": "Quotation deleted successfully", "id": quotation_id}
+

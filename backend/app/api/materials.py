@@ -16,10 +16,9 @@ def get_materials(category: Optional[str] = None, db: Session = Depends(get_db))
 
 @router.post("", response_model=MaterialOut)
 def create_material(mat_in: MaterialCreate, db: Session = Depends(get_db)):
-    data = mat_in.dict()
-    data.pop('in_stock', None)
-    data.pop('notes', None)
-    mat = Material(**data)
+    valid_cols = {c.name for c in Material.__table__.columns}
+    clean_data = {k: v for k, v in mat_in.dict().items() if k in valid_cols and k != 'id'}
+    mat = Material(**clean_data)
     db.add(mat)
     db.commit()
     db.refresh(mat)
@@ -30,10 +29,9 @@ def update_material(material_id: str, mat_in: MaterialCreate, db: Session = Depe
     mat = db.query(Material).filter(Material.id == material_id).first()
     if not mat:
         raise HTTPException(status_code=404, detail="Material not found")
-    data = mat_in.dict()
-    data.pop('in_stock', None)
-    data.pop('notes', None)
-    for key, val in data.items():
+    valid_cols = {c.name for c in Material.__table__.columns}
+    clean_data = {k: v for k, v in mat_in.dict().items() if k in valid_cols and k != 'id'}
+    for key, val in clean_data.items():
         setattr(mat, key, val)
     db.commit()
     db.refresh(mat)

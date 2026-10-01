@@ -14,7 +14,8 @@ import {
   MessageSquare,
   AlertCircle,
   X,
-  Eye
+  Eye,
+  Trash2
 } from 'lucide-react';
 
 export default function QuotationsView({ 
@@ -22,6 +23,7 @@ export default function QuotationsView({
   onSelectQuotation, 
   onCreateRevision, 
   onOpenClientPortal,
+  onDeleteQuotation,
   onRefresh
 }) {
   const [previewQuote, setPreviewQuote] = useState(null);
@@ -102,62 +104,76 @@ export default function QuotationsView({
             return (
               <div
                 key={quote.id}
-                className="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-xs hover:shadow-sm transition flex flex-col justify-between"
+                className="bg-white rounded-3xl border border-amber-500/25 p-4 sm:p-6 shadow-[0_4px_25px_rgba(217,119,6,0.06)] hover:border-amber-500/40 transition flex flex-col justify-between"
               >
               <div>
                 {/* Header row: Number, Version & Status */}
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                   <div className="flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-blue-600 shrink-0" />
-                    <span className="font-bold text-slate-900 text-sm sm:text-base">{quote.quotation_number}</span>
-                    <span className="bg-slate-100 text-slate-700 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded">
+                    <div className="p-1.5 bg-amber-500/10 text-amber-600 rounded-xl border border-amber-500/20">
+                      <FileText className="w-4 h-4" />
+                    </div>
+                    <span className="font-serif font-bold text-slate-900 text-sm sm:text-base tracking-wide">{quote.quotation_number}</span>
+                    <span className="bg-amber-500/10 text-amber-800 border border-amber-500/25 text-[10px] sm:text-xs font-mono font-bold px-2 py-0.5 rounded-full">
                       {quote.version}
                     </span>
                   </div>
 
-                  <span className={`text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full ${
-                    quote.status === 'Accepted' || quote.status === 'Confirmed'
-                      ? 'bg-emerald-100 text-emerald-800'
-                      : quote.status === 'Quotation Sent' || quote.status === 'Viewed'
-                      ? 'bg-blue-100 text-blue-800'
-                      : quote.status === 'Negotiation' || quote.status === 'Revision Requested'
-                      ? 'bg-amber-100 text-amber-800'
-                      : 'bg-slate-100 text-slate-700'
-                  }`}>
-                    {quote.status}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className={`text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full ${
+                      quote.status === 'Accepted' || quote.status === 'Confirmed'
+                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                        : quote.status === 'Quotation Sent' || quote.status === 'Viewed'
+                        ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                        : quote.status === 'Negotiation' || quote.status === 'Revision Requested'
+                        ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                        : 'bg-slate-100 text-slate-700'
+                    }`}>
+                      {quote.status}
+                    </span>
+
+                    {onDeleteQuotation && (
+                      <button
+                        onClick={() => onDeleteQuotation(quote.id)}
+                        className="p-1.5 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 transition active:scale-95 border border-transparent hover:border-rose-200"
+                        title="Delete Quotation"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* Scope & Financial Breakdown */}
                 <div className="py-3.5 space-y-2.5 text-xs">
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-500">Subtotal:</span>
-                    <span className="font-semibold text-slate-700">{formatINR(quote.subtotal)}</span>
+                  <div className="flex justify-between items-center text-slate-600">
+                    <span>Subtotal:</span>
+                    <span className="font-semibold text-slate-800 font-mono">{formatINR(quote.subtotal)}</span>
                   </div>
                   {quote.discount_amount > 0 && (
                     <div className="flex justify-between items-center text-rose-600">
                       <span>Special Discount:</span>
-                      <span className="font-semibold">- {formatINR(quote.discount_amount)}</span>
+                      <span className="font-semibold font-mono">- {formatINR(quote.discount_amount)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between items-center text-slate-500">
+                  <div className="flex justify-between items-center text-slate-600">
                     <span>GST ({quote.tax_percent}%):</span>
-                    <span className="font-semibold">+ {formatINR(quote.tax_amount)}</span>
+                    <span className="font-semibold text-slate-800 font-mono">+ {formatINR(quote.tax_amount)}</span>
                   </div>
-                  <div className="flex justify-between items-center pt-2 border-t border-slate-100">
-                    <span className="font-bold text-slate-900 text-xs sm:text-sm">Proposal Value:</span>
-                    <span className="font-extrabold text-blue-600 text-base sm:text-lg">{formatINR(quote.total_amount)}</span>
+                  <div className="flex justify-between items-center pt-2.5 border-t border-slate-100">
+                    <span className="font-serif font-bold text-slate-900 text-xs sm:text-sm">Proposal Value:</span>
+                    <span className="font-mono font-bold text-slate-900 text-base sm:text-xl">{formatINR(quote.total_amount)}</span>
                   </div>
 
                   {/* Private Internal Profit Strip */}
-                  <div className="bg-emerald-50/70 border border-emerald-200/60 rounded-xl p-2.5 sm:p-3 flex items-center justify-between text-xs">
+                  <div className="bg-gradient-to-r from-emerald-50/80 to-teal-50/50 border border-emerald-200/80 rounded-2xl p-2.5 sm:p-3 flex items-center justify-between text-xs">
                     <div>
                       <div className="text-[9px] uppercase font-bold text-emerald-800">Internal Cost</div>
-                      <div className="font-semibold text-slate-700 text-xs">{formatINR(quote.total_cost)}</div>
+                      <div className="font-semibold text-slate-700 text-xs font-mono">{formatINR(quote.total_cost)}</div>
                     </div>
                     <div className="text-right">
                       <div className="text-[9px] uppercase font-bold text-emerald-800">Gross Margin</div>
-                      <div className="font-bold text-emerald-700 text-xs sm:text-sm">
+                      <div className="font-bold text-emerald-700 text-xs sm:text-sm font-mono">
                         {formatINR(quote.gross_margin)} ({quote.margin_percent}%)
                       </div>
                     </div>
@@ -171,10 +187,10 @@ export default function QuotationsView({
                   {/* Preview PDF */}
                   <button
                     onClick={() => setPreviewQuote(quote)}
-                    className="flex items-center gap-1 bg-blue-50 hover:bg-blue-100 active:scale-95 text-blue-700 text-xs font-semibold px-2.5 sm:px-3 py-2 rounded-xl transition touch-manipulation border border-blue-200/60 shadow-xs"
+                    className="flex items-center gap-1 bg-[#131b2e] hover:bg-[#1a253c] active:scale-95 text-amber-200 text-xs font-semibold px-2.5 sm:px-3 py-2 rounded-xl transition touch-manipulation border border-amber-500/20 shadow-xs"
                     title="Preview Quotation PDF"
                   >
-                    <Eye className="w-3.5 h-3.5" />
+                    <Eye className="w-3.5 h-3.5 text-amber-400" />
                     <span>Preview</span>
                   </button>
 
@@ -183,10 +199,10 @@ export default function QuotationsView({
                     href={`${window.__API_BASE__ || ''}/api/quotations/${quote.id}/pdf`}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-1 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white text-xs font-semibold px-2.5 sm:px-3 py-2 rounded-xl transition touch-manipulation shadow-xs"
+                    className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 active:scale-95 text-slate-950 text-xs font-extrabold px-3 py-2 rounded-xl transition touch-manipulation shadow-xs border border-amber-300/40"
                     title="Download PDF"
                   >
-                    <Download className="w-3.5 h-3.5" />
+                    <Download className="w-3.5 h-3.5 text-slate-950" />
                     <span>PDF</span>
                   </a>
 
@@ -217,10 +233,10 @@ export default function QuotationsView({
                 {/* Client Portal Link */}
                 <button
                   onClick={() => onOpenClientPortal(quote.public_token)}
-                  className="flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 active:scale-95 py-1 px-1 touch-manipulation"
+                  className="flex items-center gap-1 text-xs font-bold text-amber-700 hover:text-amber-800 active:scale-95 py-1 px-1 touch-manipulation"
                 >
                   <span>Portal</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
+                  <ExternalLink className="w-3.5 h-3.5 text-amber-600" />
                 </button>
               </div>
             </div>

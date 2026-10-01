@@ -89,3 +89,4 @@ pdf_page*.png
 /tmp/
 .neon
 .env.local
+.agents/

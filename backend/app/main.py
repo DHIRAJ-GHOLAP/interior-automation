@@ -24,15 +24,6 @@ from .api import (
     ai
 )
 
-# 1. Initialize Tables
-Base.metadata.create_all(bind=engine)
-
-# 2. Seed Default Tenant, User & Catalog
-with SessionLocal() as db:
-    tenant = get_or_create_default_tenant(db)
-    get_or_create_default_user(db, tenant)
-    seed_database(db)
-
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description="Enterprise Multi-Tenant SaaS for Interior Quotation, BOQ Engine, Client CRM & Automated Follow-up",
@@ -40,6 +31,11 @@ app = FastAPI(
     docs_url="/docs" if settings.DEBUG or settings.ENV != "production" else "/api/docs",
     redoc_url="/redoc" if settings.DEBUG or settings.ENV != "production" else "/api/redoc"
 )
+
+@app.on_event("startup")
+def on_startup():
+    # Database tables and catalog seed are already verified in Neon PostgreSQL
+    pass
 
 # 3. Security & Telemetry Middlewares
 class SecurityAndTracingMiddleware(BaseHTTPMiddleware):

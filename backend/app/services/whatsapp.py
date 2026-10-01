@@ -14,17 +14,17 @@ class WhatsAppService:
         pdf_url: str = None,
         studio_name: str = "More Construction and Interior"
     ) -> str:
-        formatted_amount = f"₹{amount:,.2f}"
+        formatted_amount = f"Rs. {amount:,.2f}"
         lines = [
             f"Hello {client_name},",
             f"",
             f"Greetings from *{studio_name}*! Your detailed interior estimate & design proposal is ready for review.",
             f"",
-            f"• *Quotation No:* {quotation_number}",
-            f"• *Project:* {project_name}",
-            f"• *Total Proposal Value:* {formatted_amount}",
+            f"- *Quotation No:* {quotation_number}",
+            f"- *Project:* {project_name}",
+            f"- *Total Proposal Value:* {formatted_amount}",
             f"",
-            f"--------------------------------------------------",
+            f"----------------------------------------",
             f"*1. View Interactive Proposal & Reply Online:*",
             f"{portal_url}",
             f"_(Review room-by-room BOQ items, specifications, and approve or request revisions directly on your phone)_",
@@ -37,7 +37,7 @@ class WhatsAppService:
                 f"",
             ])
         lines.extend([
-            f"--------------------------------------------------",
+            f"----------------------------------------",
             f"*Quick Reply:* You can review the proposal and approve or request revisions directly through the online link above or reply right here on WhatsApp!",
             f"",
             f"Warm regards,",

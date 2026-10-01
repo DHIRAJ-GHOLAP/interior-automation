@@ -92,20 +92,20 @@ export default function MaterialsView({ materials, onAddMaterial, onDeleteMateri
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">Materials Database & Costing</h2>
+          <h2 className="text-lg sm:text-xl font-serif font-bold text-slate-900 tracking-tight">Materials Database & Specifications</h2>
           <p className="text-[11px] sm:text-xs text-slate-500">Configure purchase costs, client selling rates, and wastage margins</p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow-xs touch-manipulation"
+          className="flex items-center justify-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 active:scale-95 text-slate-950 text-xs font-extrabold px-4 py-2.5 rounded-xl transition shadow-xs touch-manipulation border border-amber-300/40"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4 text-slate-950" />
           <span>Add Material</span>
         </button>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+      <div className="bg-white p-3.5 sm:p-4 rounded-3xl border border-amber-500/20 shadow-sm space-y-3">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
           <div className="relative flex-1">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
@@ -114,12 +114,12 @@ export default function MaterialsView({ materials, onAddMaterial, onDeleteMateri
               placeholder="Search material, brand, or grade..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
           </div>
-          <div className="flex items-center gap-1.5 text-[11px] text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg">
+          <div className="flex items-center gap-1.5 text-[11px] text-slate-600 bg-amber-50/50 border border-amber-500/20 px-3 py-1.5 rounded-xl">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-            <span>Purchase costs are strictly hidden from clients</span>
+            <span className="font-medium">Internal purchase costs are 100% private from clients</span>
           </div>
         </div>
 
@@ -131,7 +131,7 @@ export default function MaterialsView({ materials, onAddMaterial, onDeleteMateri
               onClick={() => setSelectedCategory(cat)}
               className={`px-3 py-1.5 rounded-xl font-semibold whitespace-nowrap transition touch-manipulation text-[11px] sm:text-xs ${
                 selectedCategory === cat
-                  ? 'bg-slate-900 text-white shadow-xs'
+                  ? 'bg-[#090d16] text-amber-300 border border-amber-500/40 shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300'
               }`}
             >

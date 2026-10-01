@@ -184,6 +184,27 @@ def update_project(project_id: str, proj_in: ProjectCreate, db: Session = Depend
     db.refresh(p)
     return {"message": "Project updated successfully"}
 
+@router.delete("/{project_id}")
+def delete_project(project_id: str, db: Session = Depends(get_db)):
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    # Clear self-referential parent_quotation_id on quotations belonging to this project
+    quote_ids = [q.id for q in p.quotations]
+    if quote_ids:
+        db.query(Quotation).filter(Quotation.parent_quotation_id.in_(quote_ids)).update(
+            {Quotation.parent_quotation_id: None}, synchronize_session=False
+        )
+        from ..models import WhatsAppLog
+        db.query(WhatsAppLog).filter(WhatsAppLog.quotation_id.in_(quote_ids)).update(
+            {WhatsAppLog.quotation_id: None}, synchronize_session=False
+        )
+
+    db.delete(p)
+    db.commit()
+    return {"message": "Project deleted successfully", "id": project_id}
+
 # Add room to project
 @router.post("/{project_id}/rooms")
 def add_room(project_id: str, room_in: RoomBase, db: Session = Depends(get_db)):
@@ -307,6 +328,27 @@ def delete_boq_item(boq_id: str, db: Session = Depends(get_db)):
     db.delete(boq)
     db.commit()
     return {"message": "BOQ item deleted"}
+
+# Delete Room
+@router.delete("/rooms/{room_id}")
+def delete_room(room_id: str, db: Session = Depends(get_db)):
+    room = db.query(Room).filter(Room.id == room_id).first()
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    project_id = room.project_id
+    db.delete(room)
+    db.commit()
+    return {"message": "Room deleted", "id": room_id, "project_id": project_id}
+
+# Delete Measurement
+@router.delete("/measurements/{meas_id}")
+def delete_measurement(meas_id: str, db: Session = Depends(get_db)):
+    m = db.query(Measurement).filter(Measurement.id == meas_id).first()
+    if not m:
+        raise HTTPException(status_code=404, detail="Measurement not found")
+    db.delete(m)
+    db.commit()
+    return {"message": "Measurement deleted", "id": meas_id}
 
 # --- Turnkey Construction & Interior Project Templates ---
 TEMPLATES_CATALOG = [
